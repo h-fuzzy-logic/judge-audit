@@ -86,3 +86,14 @@ The test runner for everything in `tests/`. Notes specific to how it's used here
 - `capsys` fixture to assert on printed output (`test_print_confusion_matrices_outputs_group_header`)
 - `tmp_path` fixture for file-writing tests (`test_write_csv_round_trip`), so tests never touch the real `reports/` directory
 - No `import pytest` needed at all for the simplest tests. Only pulled in when a test actually uses a pytest-specific feature (`parametrize`, `approx`, `capsys`)
+
+## Why Incremental Changes Matter
+
+Every bug hit while building this project was caught cheaply because each change was reviewed and smoke-tested in isolation before moving on to the next one:
+
+- Dataset schema mismatch in `prepare_dataset.py` (see the Hugging Face `datasets` note above)
+- Two relative-path errors in `configs/promptfooconfig.yaml` (see the Promptfoo section above)
+- A missing `make` binary in the Docker image (see the Docker section above)
+- An outdated Node version in the Docker image (see the Docker section above)
+
+Batching those same changes together would have meant discovering all four failures only after kicking off a paid, 150-row eval run. That's the expensive way to learn the same lesson. When a "run" means real API spend and real wall-clock time, verifying one small change at a time is what makes iterating quickly possible, not what slows it down.

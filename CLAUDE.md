@@ -14,6 +14,10 @@
 - `.promptfoo/` holds Promptfoo's own eval history/cache (git-ignored), separate from the `reports/*.json` files written via `-o`. Running Promptfoo outside Docker writes to `~/.promptfoo` on the host instead, splitting history across two stores. Don't do that.
 - `check-env` auto-copies `.env.example` to `.env` if missing; real API keys still need to be filled in by hand.
 
+## Git commits
+
+- Keep commit messages short: a single imperative-mood line, no body. Only add a body if the change genuinely needs explanation that isn't obvious from the diff or the subject line.
+
 ## Documentation style
 
 - Text generated for this project (README, docs) should be structured and skimmable: clear headings, heavy use of bulleted lists over prose paragraphs, so the outline is visible at a glance.
