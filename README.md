@@ -22,9 +22,9 @@ This repo was built interactively with Claude Code with project-specific convent
 Reproducible environments, cost-aware guardrails, and a fast experiment loop are some of the disciplines every team (a research lab, a startup, an enterprise ML org) needs to move fast without breaking things or burning budget. Built so anyone picking this up can iterate quickly without babysitting infrastructure or trying to remember "how do I run this again."
 
 ### Reproducible environments
-- **One-command, no-drift setup.** `make docker-build` gives everyone the same environment. No "works on my machine" headaches.
-- **One Makefile, not five remembered commands.** `make prepare`, `make eval`, `make analyze` are the same entry points for every contributor, so no one's typing a slightly different `docker compose run` or `npx promptfoo eval` flag by hand.
-- **Conventions documented once.** `CLAUDE.md` captures them, so work doesn't quietly drift back to ad hoc, undocumented commands.
+- **One Makefile, not five remembered commands.** Every workflow step has the same entry point for every contributor, so no one's typing a slightly different command or flag by hand.
+- **One Docker image, not manually matched versions.** A single command gives everyone the same environment. No "works on my machine" headaches.
+- **One CLAUDE.md, not repeated tribal knowledge.** It captures the team's conventions, so work doesn't quietly drift back to ad hoc, undocumented commands.
 
 ### Cost-aware guardrails
 - **Guardrails tuned for cost, not just correctness.** `.claude/settings.json`:
