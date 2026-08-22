@@ -45,8 +45,7 @@ judge-eval-harness/
 ├── docs/
 │   ├── research.md              # dataset, hypotheses, results
 │   ├── approaches.md            # how each part of the tooling works
-│   ├── tastes.md                # research/engineering taste notes
-│   └── repo-structure.md        # the original planning doc
+│   └── tastes.md                # research/engineering taste notes
 ├── reports/
 │   ├── scored_results.csv       # per-item judge vs. human scores
 │   ├── agreement_summary.csv    # kappa/QWK/agreement per condition
@@ -66,8 +65,9 @@ Note: `reports/results.json` (raw Promptfoo output) and `.promptfoo/` (eval hist
 
 ## Documentation
 
+Deeper documentation than this README needs, organized by purpose:
+
 - [Research](docs/research.md): Dataset, hypotheses, experiments and results.
 - [Technologies](docs/approaches.md): Why each technology was chosen and how it is used in this repo (Promptfoo, Docker, Python libraries).
-- [Research Taste and Engineering Taste](docs/tastes.md): My judgements and principles that drive my work. 
-- [Repository Structure](docs/repo-structure.md): The repo layout.
-- [`CLAUDE.md`](CLAUDE.md): Conventions for this repo.
+- [Research Taste and Engineering Taste](docs/tastes.md): Judgments and principles behind the decisions in this repo.
+- [CLAUDE.md](CLAUDE.md): Conventions for this repo.
