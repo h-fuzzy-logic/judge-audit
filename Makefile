@@ -1,5 +1,5 @@
 # ==============================================================================
-# Judge Calibration Kit - Workflow Automation Makefile
+# judge-eval-harness - Workflow Automation Makefile
 # ==============================================================================
 
 .PHONY: help setup prepare eval analyze test report clean check-env docker-build docker-run docker-eval docker-analyze docker-shell docker-clean docker-view
@@ -10,8 +10,8 @@ BIN := $(VENV)/bin
 PROMPTFOO := npx promptfoo
 
 help:
-	@echo "Judge Calibration Kit - CLI Automation"
-	@echo "======================================="
+	@echo "judge-eval-harness - CLI Automation"
+	@echo "===================================="
 	@echo "make setup       : Create virtualenv and install dependencies"
 	@echo "make prepare     : Download & sample 150 ground-truth items from RAGTruth"
 	@echo "make eval        : Run Promptfoo judge evaluations (requires API keys)"
