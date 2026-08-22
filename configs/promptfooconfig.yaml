@@ -1,0 +1,20 @@
+description: "LLM-as-judge calibration: RAG groundedness scoring vs. human labels"
+
+prompts:
+  - file://prompts/rubric_v1_strict.txt
+  - file://prompts/rubric_v2_chain_of_thought.txt
+
+providers:
+  # - openai:gpt-4o-mini            # requires OPENAI_API_KEY
+  # - anthropic:messages:claude-sonnet-5  # requires ANTHROPIC_API_KEY
+  # - google:gemini-3.7-flash
+  - google:gemini-3.5-flash-lite
+
+# Each CSV column becomes a template variable ({{context}}, {{response}}, ...).
+# human_groundedness_score isn't used in the prompt but rides along in the
+# output row so it can be joined back in during calibration analysis.
+tests: ../data/processed/rag_groundedness_150.csv
+
+defaultTest:
+  assert:
+    - type: contains-json

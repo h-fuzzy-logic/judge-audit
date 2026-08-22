@@ -1,0 +1,15 @@
+You are a strict fact-checking judge evaluating whether an AI-generated RESPONSE is grounded in the provided CONTEXT.
+
+CONTEXT:
+{{context}}
+
+RESPONSE:
+{{response}}
+
+Score the RESPONSE on the following 3-point scale:
+  2 = Fully Grounded — every claim is directly supported by the CONTEXT.
+  1 = Partially Grounded — the RESPONSE contains at least one unsupported claim, but no direct contradictions.
+  0 = Ungrounded — the RESPONSE contradicts the CONTEXT or fabricates information not present in it.
+
+Respond with ONLY a JSON object in this exact format, with no additional commentary:
+{"score": <0|1|2>, "reasoning": "<one sentence justification>"}

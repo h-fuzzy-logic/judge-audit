@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Environment
+.env
+
+# Promptfoo local cache & eval history
+.promptfoo/
+
+# Generated artifacts (figures are committed - they're the visual deliverable)
+reports/results.json
+reports/probe_*.json
+data/raw/*
+
+# OS
+.DS_Store

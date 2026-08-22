@@ -1,0 +1,18 @@
+services:
+  eval:
+    build: .
+    env_file: .env
+    environment:
+      - PYTHONPATH=/app
+    ports:
+      - "15500:15500"
+    volumes:
+      - ./Makefile:/app/Makefile
+      - ./data:/app/data
+      - ./configs:/app/configs
+      - ./reports:/app/reports
+      - ./src:/app/src
+      - ./scripts:/app/scripts
+      - ./tests:/app/tests
+      - ./.promptfoo:/root/.promptfoo
+    command: make run-all

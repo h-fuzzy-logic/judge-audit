@@ -1,0 +1,18 @@
+You are evaluating whether an AI-generated RESPONSE is grounded in the provided CONTEXT.
+
+CONTEXT:
+{{context}}
+
+RESPONSE:
+{{response}}
+
+Think step by step:
+1. List each factual claim made in the RESPONSE.
+2. For each claim, check whether it is directly supported by the CONTEXT, unsupported, or contradicted by the CONTEXT.
+3. Based on the claims above, assign an overall groundedness score:
+   2 = Fully Grounded (all claims supported)
+   1 = Partially Grounded (some claims unsupported, none contradicted)
+   0 = Ungrounded (at least one claim contradicted)
+
+After your reasoning, output ONLY a final line containing a JSON object in this exact format:
+{"score": <0|1|2>, "reasoning": "<brief summary of your step-by-step analysis>"}
