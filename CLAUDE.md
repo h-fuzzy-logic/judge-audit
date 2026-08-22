@@ -16,7 +16,7 @@
 
 ## Git commits
 
-- Keep commit messages short: a single imperative-mood line, no body. Only add a body if the change genuinely needs explanation that isn't obvious from the diff or the subject line.
+- Keep commit messages short: a single imperative-mood line, no body. Only add a body if the change genuinely needs explanation that isn't obvious from the diff or the subject line. Add period at the end. 
 
 ## Documentation style
 
