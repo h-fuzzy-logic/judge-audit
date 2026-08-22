@@ -22,3 +22,25 @@ Notes on research and engineering taste, distilled from building `judge-eval-har
 - **Documentation is a UX problem too.** Pushed back on prose-heavy docs in favor of skimmable, heavily-bulleted structure. A README should be scannable, not just complete.
 - **Organize documentation the way you organize thinking.** Structure (headings, grouping, ordering) should make the logic legible to a collaborator, not just hold the content. Documentation is a way of thinking out loud clearly, meant to be followed by someone else.
 - **Write for what the reader needs, not the path taken to get there.** Docs are framed around outcomes and benefits to whoever's using the project (a researcher iterating fast, a teammate onboarding), not as a chronological log of the steps taken to build it.
+
+## Reproducibility & Velocity in Practice
+
+Reproducible environments, cost-aware guardrails, and a fast experiment loop are some of the disciplines every team (a research lab, a startup, an enterprise ML org) needs to move fast without breaking things or burning budget. Concrete evidence behind the Engineering Taste bullets above:
+
+### Reproducible environments
+- **One Makefile, not five remembered commands.** Every workflow step has the same entry point for every contributor, so no one's typing a slightly different command or flag by hand.
+- **One Docker image, not manually matched versions.** A single command gives everyone the same environment. No "works on my machine" headaches.
+- **One CLAUDE.md, not repeated tribal knowledge.** It captures the team's conventions, so work doesn't quietly drift back to ad hoc, undocumented commands.
+
+### Cost-aware guardrails
+- **Guardrails tuned for cost, not just correctness.** Tool permissions auto-allow no-cost operations but always ask first for anything that spends real API money.
+- **Config mistakes caught before they cost anything.** An automated check runs on every config edit, catching errors immediately instead of surfacing them only after a failed (and possibly paid) eval run.
+- **Zero-cost config checks.** A free validation step catches bad paths/YAML/provider IDs in seconds, no API spend.
+
+### Fast experiment loop
+- **Eval history survives ephemeral containers.** Local results stay browsable across runs, not just the latest.
+- **Fast edit loop, no rebuild tax.** Code and config edits take effect immediately in the Docker container; a rebuild is only needed after a dependency change.
+- **Cheap smoke tests before a full run.** A new rubric or provider can be validated against a handful of rows before committing to the full run.
+- **Judge/provider swaps are single-line edits.** Rubric prompts and providers are commented in/out individually, no code changes needed.
+
+See [`approaches.md`](approaches.md) for implementation details and the specific bugs this setup was built to catch early.
