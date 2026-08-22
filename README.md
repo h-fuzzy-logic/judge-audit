@@ -12,6 +12,14 @@
 - Deliberately probe known failure modes (position bias, verbosity bias, self-preference, tautological rubrics) and show which ones move scores
 - Ship as a Promptfoo-compatible repo plus a writeup with the disagreement matrix
 
+## Documentation
+
+- [`docs/research.md`](docs/research.md): the actual research content. Dataset, hypotheses, experiments and results.
+- [`docs/approaches.md`](docs/approaches.md): how each part of the tooling works and why (Promptfoo, Docker, Python libraries), built up incrementally.
+- [`docs/tastes.md`](docs/tastes.md): research and engineering taste notes distilled from building this project.
+- [`docs/repo-structure.md`](docs/repo-structure.md): the intended repo layout.
+- [`CLAUDE.md`](CLAUDE.md): working conventions for this repo (Docker/Makefile usage, doc style).
+
 ## Reproducibility & Efficiency
 
 Built so a researcher can iterate fast without babysitting infrastructure or re-deriving "how do I run this again."
