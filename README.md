@@ -1,10 +1,7 @@
 # judge-eval-harness
 
 ## Project Summary
-
-> "how do you know your grader is right?"
-
-**Goal:** build the piece almost nobody publishes. A harness that measures whether an LLM judge agrees with human labels.
+A harness that measures whether an LLM judge agrees with human labels.
 
 - ~150 hand-labeled examples on one narrow task (RAG groundedness is the cleanest)
 - Run 3–4 judge configs
@@ -14,11 +11,11 @@
 
 ## Documentation
 
-- [`docs/research.md`](docs/research.md): the actual research content. Dataset, hypotheses, experiments and results.
-- [`docs/approaches.md`](docs/approaches.md): how each part of the tooling works and why (Promptfoo, Docker, Python libraries), built up incrementally.
-- [`docs/tastes.md`](docs/tastes.md): research and engineering taste notes distilled from building this project.
-- [`docs/repo-structure.md`](docs/repo-structure.md): the intended repo layout.
-- [`CLAUDE.md`](CLAUDE.md): working conventions for this repo (Docker/Makefile usage, doc style).
+- [Research](docs/research.md): Dataset, hypotheses, experiments and results.
+- [Technologies](docs/approaches.md): Why each technology was chosen and how it is used in this repo (Promptfoo, Docker, Python libraries).
+- [Research Taste and Engineering Taste](docs/tastes.md): My judgements and principles that drive my work. 
+- [Repository Structure](docs/repo-structure.md): The repo layout.
+- [`CLAUDE.md`](CLAUDE.md): Conventions for this repo.
 
 ## Reproducibility & Efficiency
 
