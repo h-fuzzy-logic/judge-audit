@@ -1,17 +1,17 @@
 # judge-eval-harness
 
 ## Project Summary
-A harness that measures whether an LLM judge agrees with human labels.
+A harness that measures whether an LLM's score agrees with a score given by a human.
 
-LLM-as-judge is used everywhere now (evals, RLHF/DPO reward signals, benchmark grading) but is rarely checked against real human judgment. A judge that quietly disagrees with humans corrupts every downstream decision built on top of it.
+I see LLM-as-judge being used everywhere but it makes me so uncomfortable, seeing AI evaluate AI.  So I created this harness to meassure LLM agreement with human labels using Cohen's κ, quadratic weighted κ, exact agreement rate, on the task RAG groundedness. See [Research](docs/research.md) for the dataset, hypothesis, and current results.
 
-This harness measures that agreement directly, using Cohen's κ, quadratic weighted κ, exact agreement rate, and confusion matrices, on one narrow task: RAG groundedness. See [Research](docs/research.md) for the dataset, hypotheses, and current results.
+I build the repo to be flexible, to allow experimentation with different tasks, metrics, LLMs, and datasets. Details about [engineering choices](docs/tastes.md#engineering-taste).
 
 This repo was built interactively with Claude Code with project-specific conventions in `CLAUDE.md`.
 
 ## Getting Started
 
-**Just want to see the results?** The dataset, scored results, and figures are already committed. Start with [`docs/research.md`](docs/research.md) or browse `reports/figures/`. No setup needed.
+**Just want to see the results?** The dataset, scored results, and figures are already committed. Start with [`docs/research.md`](docs/research.md) or browse [`reports/figures/`](reports/figures). No setup needed.
 
 **Want to run it yourself?**
 
