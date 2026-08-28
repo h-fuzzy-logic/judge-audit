@@ -32,6 +32,7 @@ Small and hand-verifiable by design, not a large benchmark cut.
   - **2 (Fully Grounded):** no hallucination spans of either kind
   - **1 (Partially Grounded):** `baseless_info` present, no `evident_conflict`
   - **0 (Ungrounded):** `evident_conflict` present (a hard contradiction)
+- **Limitation:** `human_groundedness_score` is a rule applied to aggregated span counts, not a human holistically rating the response 0-2. The judge, by contrast, produces its 0-2 score directly from the raw context and response with no visibility into spans or counts at all. Disagreement between judge and label can reflect either a real judge failure or a mismatch between this collapsing rule and how a human would holistically bucket severity (1 baseless-info span and 15 baseless-info spans both collapse to the same "1"). Not yet validated against a human directly re-rating a sample holistically.
 
 
 ## Hypothesis Tested
@@ -63,6 +64,7 @@ Small and hand-verifiable by design, not a large benchmark cut.
   | With Chain-of-Thought | **0.54** | **0.60** | **69.3%** | 0/150 |
 
 - **Finding:** chain-of-thought reasoning meaningfully improved agreement on all three metrics, so **H1 is supported** for this provider. The confusion matrix shows *why*: the strict rubric badly over-predicts "partially grounded" (1). Only 8/44 fully-ungrounded (human=0) items were caught correctly, with 36 misclassified as 1. The CoT rubric catches 30/50 of those same cases correctly. The fully-grounded (human=2) row is nearly identical between the two rubrics, so the improvement is concentrated in catching actual contradictions, not a uniform lift everywhere.
+- **Caveat on that finding:** `rubric_v2_chain_of_thought` asks the judge to break the response into claims and categorize each one, which structurally resembles how the ground-truth label itself was built (span-by-span categorization, then collapsed). `rubric_v1_strict` asks for a single holistic guess with no such breakdown. Part of the κ improvement may reflect that the CoT process happens to match the label's own construction method, not that chain-of-thought reasoning is generally better. This experiment can't separate those two explanations; see the label-derivation limitation above.
 - **Provider note:** an earlier attempt used `google:gemini-3.7-flash`, which hit frequent `503 UNAVAILABLE` ("high demand") errors and ran slowly, so the project switched to `gemini-3.5-flash-lite` for stability and speed. Worth flagging as a limitation: flash-lite is a smaller/faster tier, so this result may understate what a stronger reasoning model would show. Not yet tested against a larger Gemini tier or a different provider.
 
 *(Next experiments, multi-provider comparison and bias probes, are not yet run. Add them here once they are.)*
