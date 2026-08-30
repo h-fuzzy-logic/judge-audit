@@ -5,7 +5,7 @@ Notes on research and engineering taste, distilled from building `judge-eval-har
 ## Research Taste
 
 - **Trust nothing you haven't calibrated.** Started from "how do you know your grader is right?" instead of assuming an LLM judge is reliable, and built a harness to measure judge/human agreement (Cohen's κ, quadratic weighted κ) before trusting the judge for anything downstream.
-- **Pick the narrowest task that still proves the point.** Scoped to one task (RAG groundedness) and ~150 hand-labeled examples rather than a broad benchmark. Small and well-labeled beats large and unverifiable.
+- **Pick the narrowest task that still proves the point.** Scoped to one task (source-groundedness) and ~150 hand-labeled examples rather than a broad benchmark. Small and well-labeled beats large and unverifiable.
 - **Assume failure modes exist, and go looking for them.** Didn't stop at a headline agreement score. Deliberately built adversarial probes (position bias, verbosity bias, self-preference, tautological rubrics) to see which ones actually move the judge's scores.
 - **Verify the data before trusting the pipeline.** Caught a live schema mismatch (the real dataset's columns didn't match the script's assumed field names) by inspecting actual output, not by trusting a docstring.
 - **A result isn't done until someone else can reproduce it.** The deliverable isn't a number, it's a Promptfoo-compatible repo plus a writeup with the disagreement matrix, built so someone else can rerun and check the claim.

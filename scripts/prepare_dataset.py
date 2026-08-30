@@ -22,7 +22,7 @@ def map_ragtruth_to_score(processed_labels: dict) -> int:
     return 2
 
 
-def prepare_ragtruth_dataset(output_path: str = "data/processed/rag_groundedness_150.csv", seed: int = 42):
+def prepare_ragtruth_dataset(output_path: str = "data/processed/source_groundedness_150.csv", seed: int = 42):
     print("Loading RAGTruth dataset from Hugging Face (wandb/RAGTruth-processed)...")
     
     # Load dataset split from Hugging Face

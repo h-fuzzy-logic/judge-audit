@@ -40,7 +40,7 @@ judge-eval-harness/
 │       ├── rubric_v1_strict.txt
 │       └── rubric_v2_chain_of_thought.txt
 ├── data/processed/
-│   └── rag_groundedness_150.csv # the 150-item hand-labeled dataset
+│   └── source_groundedness_150.csv # the 150-item hand-labeled dataset
 ├── docs/
 │   ├── research.md              # index of hypotheses tested, links to each experiment
 │   ├── approaches.md            # how each part of the tooling works

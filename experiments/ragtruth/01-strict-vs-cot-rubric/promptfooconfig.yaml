@@ -1,4 +1,4 @@
-description: "LLM-as-judge calibration: RAG groundedness scoring vs. human labels"
+description: "LLM-as-judge calibration: source-groundedness scoring vs. human labels"
 
 prompts:
   - file://../../../configs/prompts/rubric_v1_strict.txt
@@ -13,7 +13,7 @@ providers:
 # Each CSV column becomes a template variable ({{context}}, {{response}}, ...).
 # human_groundedness_score isn't used in the prompt but rides along in the
 # output row so it can be joined back in during calibration analysis.
-tests: ../../../data/processed/rag_groundedness_150.csv
+tests: ../../../data/processed/source_groundedness_150.csv
 
 defaultTest:
   assert:

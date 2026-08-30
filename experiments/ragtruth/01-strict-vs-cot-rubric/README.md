@@ -5,7 +5,7 @@
 
 ## Hypothesis Tested
 
-Measure LLM agreement with human labels using Cohen's κ, quadratic weighted κ, exact agreement rate, on the task RAG groundedness. 
+Measure LLM agreement with human labels using Cohen's κ, quadratic weighted κ, exact agreement rate, on the task source-groundedness. 
 
 **Hypothesis tested so far:** *Does judge prompt design, specifically asking for chain-of-thought reasoning before a score versus asking for a direct score only, change how well the judge agrees with human labels?*
 - **H0:** Chain-of-thought reasoning makes no difference to judge/human agreement.
@@ -18,7 +18,7 @@ See [`experiments/ragtruth/ragtruth.md`](../ragtruth.md) for the RAGTruth datase
 
 ## Data Processing
 
-Built by `scripts/prepare_dataset.py`, resulting in [150 rows](data/processed/rag_groundedness_150.csv) from the train set. 
+Built by `scripts/prepare_dataset.py`, resulting in [150 rows](../../../data/processed/source_groundedness_150.csv) from the train set. 
 
 - **Columns used:** `context`, `output` (renamed `response`), `hallucination_labels_processed`, and `quality` (used only as a filter, not carried into the final CSV).
 - **Columns dropped:** `task_type`, `model`, `temperature`, and `hallucination_labels`.
