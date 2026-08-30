@@ -19,7 +19,7 @@ Measure LLM agreement with human labels using Cohen's κ, quadratic weighted κ,
 
 
 ## Dataset Description
-See [`experiments/ragtruth/ragtruth.md`](../experiments/ragtruth/ragtruth.md) for the RAGTruth dataset description.
+See [`experiments/ragtruth/ragtruth.md`](../ragtruth.md) for the RAGTruth dataset description.
 
 ## Data Processing In This Repo
 ### Experiment 1
@@ -65,4 +65,4 @@ The `human_groundedness_score` used as ground truth in this experiment (derived 
 
 
 ### Future Experiments
-- See [Annotation Methodology](#annotation-methodology) and the label-derivation caveat in [`docs/research.md`](../../docs/research.md) for known limitations of this sample not yet addressed (label collapsing, no direct human holistic re-rating).
+- See [Annotation Methodology](../ragtruth.md#annotation-methodology) and the [label-derivation weakness](#weakness-label-derivation-isnt-a-human-holistic-rating) above for known limitations of this sample not yet addressed (label collapsing, no direct human holistic re-rating).
