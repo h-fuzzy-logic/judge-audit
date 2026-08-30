@@ -42,6 +42,15 @@ def prepare_ragtruth_dataset(output_path: str = "data/processed/rag_groundedness
     df["context"] = df[context_col].astype(str).str.strip()
     df["response"] = df[response_col].astype(str).str.strip()
 
+    # Filter out non-"good" quality rows (refusals, truncated generations).
+    # These aren't real groundedness judgments: e.g. a refusal has no hallucination
+    # spans to detect, so it would otherwise default to score 2 (Fully Grounded)
+    # without ever having been evaluated for groundedness at all.
+    if "quality" in df.columns:
+        before = len(df)
+        df = df[df["quality"] == "good"]
+        print(f"Dropped {before - len(df)} non-'good' quality rows (refusals/truncated).")
+
     # Map human labels to 3-point score scale
     if "hallucination_labels_processed" in df.columns:
         df["human_groundedness_score"] = df["hallucination_labels_processed"].apply(map_ragtruth_to_score)

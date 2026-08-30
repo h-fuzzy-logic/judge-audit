@@ -3,7 +3,7 @@
 ## Project Summary
 A harness that measures whether an LLM's score agrees with a score given by a human.
 
-I see LLM-as-judge being used everywhere but it makes me so uncomfortable, seeing AI evaluate AI.  So I created this harness to meassure LLM agreement with human labels using Cohen's κ, quadratic weighted κ, exact agreement rate, on the task RAG groundedness. See [Research](docs/research.md) for the dataset, hypothesis, and current results.
+I see LLM-as-judge being used everywhere but it makes me so uncomfortable, seeing AI evaluate AI. So I created this harness to allow for rapid experimentation with different tasks and metrics.  See [Research](docs/research.md) for the listing of completed and planned experiments.
 
 I build the repo to be flexible, to allow experimentation with different tasks, metrics, LLMs, and datasets. Details about [engineering choices](docs/tastes.md#engineering-taste).
 
