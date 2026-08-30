@@ -43,6 +43,8 @@ RAGTruth is a well-known public benchmark. If a judge model (Gemini, GPT, Claude
 78.8% span-level IAA means a meaningful fraction of "ground truth" spans were themselves contested between two trained annotators.
 
 
+
+
 ## Citations
 * **Original Paper:** Wu, Y., Zhu, J., Xu, S., Shum, K., Niu, C., Zhong, R., Song, J., & Zhang, T. (2024). *RAGTruth: A Hallucination Corpus for Developing Trustworthy Retrieval-Augmented Language Models*. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics.
 * **Dataset Repository:** Weights & Biases. (2024). *RAGTruth-processed* [Dataset]. Hugging Face. Available at: [huggingface.co/datasets/wandb/RAGTruth-processed](https://huggingface.co)
