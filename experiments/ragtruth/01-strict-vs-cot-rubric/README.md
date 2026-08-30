@@ -1,8 +1,9 @@
 # Experiment 1 
 
-## Hypothesis Tested
-
 **Overarching question:** "How do you know your grader is right?" Measuring whether an LLM-as-judge's groundedness scores actually agree with human labels, rather than assuming a judge is reliable by default.
+
+
+## Hypothesis Tested
 
 Measure LLM agreement with human labels using Cohen's κ, quadratic weighted κ, exact agreement rate, on the task RAG groundedness. 
 
