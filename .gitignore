@@ -11,8 +11,8 @@ __pycache__/
 .promptfoo/
 
 # Generated artifacts (figures are committed - they're the visual deliverable)
-reports/results.json
-reports/probe_*.json
+experiments/**/results.json
+experiments/**/probe_*.json
 data/raw/*
 
 # OS

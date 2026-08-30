@@ -8,6 +8,7 @@ PYTHON := python3
 VENV := .venv
 BIN := $(VENV)/bin
 PROMPTFOO := npx promptfoo
+EXPERIMENT := experiments/ragtruth/01-strict-vs-cot-rubric
 
 help:
 	@echo "judge-eval-harness - CLI Automation"
@@ -19,7 +20,7 @@ help:
 	@echo "make run-all     : Execute end-to-end pipeline (prepare -> eval -> analyze)"
 	@echo "make clean       : Clean temporary build files, cached results, and virtualenv"
 	@echo "make docker-build: Build the Docker image"
-	@echo "make docker-run  : Run the full pipeline in Docker (mounts data/, configs/, reports/)"
+	@echo "make docker-run  : Run the full pipeline in Docker (mounts data/, configs/, experiments/)"
 	@echo "make docker-eval : Run just the Promptfoo eval step in Docker (no analyze step)"
 	@echo "make docker-analyze: Run just extract_scores.py + compute_agreement.py in Docker (no eval step)"
 	@echo "make docker-shell: Open a shell inside the Docker image for debugging"
@@ -48,12 +49,12 @@ prepare: setup
 
 eval: check-env
 	@echo "Executing Promptfoo LLM Judge Evaluations..."
-	$(PROMPTFOO) eval -c configs/promptfooconfig.yaml -o reports/results.json
+	$(PROMPTFOO) eval -c $(EXPERIMENT)/promptfooconfig.yaml -o $(EXPERIMENT)/results.json
 
 analyze:
 	@echo "Computing Calibration Metrics & Generating Confusion Matrices..."
-	$(PYTHON) scripts/extract_scores.py
-	$(PYTHON) scripts/compute_agreement.py
+	$(PYTHON) scripts/extract_scores.py --results $(EXPERIMENT)/results.json --output $(EXPERIMENT)/scored_results.csv
+	$(PYTHON) scripts/compute_agreement.py --input $(EXPERIMENT)/scored_results.csv --output $(EXPERIMENT)/agreement_summary.csv --figures-dir $(EXPERIMENT)/figures
 
 run-all: prepare eval analyze
 	@echo "Full calibration pipeline execution complete!"
@@ -63,8 +64,8 @@ test:
 
 clean:
 	rm -rf $(VENV)
-	rm -rf reports/results.json
-	rm -rf reports/figures/*
+	rm -rf $(EXPERIMENT)/results.json
+	rm -rf $(EXPERIMENT)/figures/*
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 

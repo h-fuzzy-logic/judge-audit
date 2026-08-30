@@ -10,7 +10,7 @@ services:
       - ./Makefile:/app/Makefile
       - ./data:/app/data
       - ./configs:/app/configs
-      - ./reports:/app/reports
+      - ./experiments:/app/experiments
       - ./src:/app/src
       - ./scripts:/app/scripts
       - ./tests:/app/tests

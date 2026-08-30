@@ -2,7 +2,7 @@
 metrics per (provider, prompt) group, and writes a summary CSV.
 
 Usage:
-    python scripts/compute_agreement.py --input reports/scored_results.csv --output reports/agreement_summary.csv
+    python scripts/compute_agreement.py --input <experiment_dir>/scored_results.csv --output <experiment_dir>/agreement_summary.csv
 """
 import argparse
 import csv
@@ -59,7 +59,7 @@ def _clean_prompt_name(prompt: str) -> str:
     return _PROMPT_DISPLAY_NAMES.get(stem, stem.replace("_", " ").title())
 
 
-def save_confusion_matrix_figures(df: pd.DataFrame, output_dir: str = "reports/figures") -> list[Path]:
+def save_confusion_matrix_figures(df: pd.DataFrame, output_dir: str = "experiments/ragtruth/01-strict-vs-cot-rubric/figures") -> list[Path]:
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -96,7 +96,7 @@ def _build_comparison_headline(prompt_summaries: dict[str, dict]) -> str:
     )
 
 
-def save_combined_confusion_matrix_figure(df: pd.DataFrame, output_dir: str = "reports/figures") -> list[Path]:
+def save_combined_confusion_matrix_figure(df: pd.DataFrame, output_dir: str = "experiments/ragtruth/01-strict-vs-cot-rubric/figures") -> list[Path]:
     """One image per provider, with each of that provider's prompts as its own
     subplot, headlined by which rubric performed best and footed by the model name."""
     output_dir = Path(output_dir)
@@ -121,9 +121,9 @@ def save_combined_confusion_matrix_figure(df: pd.DataFrame, output_dir: str = "r
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", default="reports/scored_results.csv")
-    parser.add_argument("--output", default="reports/agreement_summary.csv")
-    parser.add_argument("--figures-dir", default="reports/figures")
+    parser.add_argument("--input", default="experiments/ragtruth/01-strict-vs-cot-rubric/scored_results.csv")
+    parser.add_argument("--output", default="experiments/ragtruth/01-strict-vs-cot-rubric/agreement_summary.csv")
+    parser.add_argument("--figures-dir", default="experiments/ragtruth/01-strict-vs-cot-rubric/figures")
     args = parser.parse_args()
 
     df = pd.read_csv(args.input)

@@ -10,8 +10,9 @@
   - `make docker-shell`: debug shell inside the container
   - `make docker-view`: Promptfoo browser UI at http://localhost:15500
   - `make docker-clean`: remove containers/image/volumes for this project
-- `data/`, `configs/`, `reports/`, `src/`, `scripts/`, and `.promptfoo/` are all bind-mounted into the container (see `docker-compose.yml`). Code and config edits and pipeline outputs sync live with the host. A rebuild (`make docker-build`) is only needed after changing `requirements.txt`.
-- `.promptfoo/` holds Promptfoo's own eval history/cache (git-ignored), separate from the `reports/*.json` files written via `-o`. Running Promptfoo outside Docker writes to `~/.promptfoo` on the host instead, splitting history across two stores. Don't do that.
+- `data/`, `configs/`, `experiments/`, `src/`, `scripts/`, and `.promptfoo/` are all bind-mounted into the container (see `docker-compose.yml`). Code and config edits and pipeline outputs sync live with the host. A rebuild (`make docker-build`) is only needed after changing `requirements.txt`.
+- `.promptfoo/` holds Promptfoo's own eval history/cache (git-ignored), separate from each experiment's own `results.json`/`scored_results.csv` files written via `-o`. Running Promptfoo outside Docker writes to `~/.promptfoo` on the host instead, splitting history across two stores. Don't do that.
+- Each experiment lives in `experiments/<dataset>/<experiment-name>/` with its own `promptfooconfig.yaml` and outputs. `configs/prompts/`, `data/`, `src/`, and `scripts/` are shared across experiments, not duplicated per experiment. The Makefile's `EXPERIMENT` variable points `eval`/`analyze`/`clean` at the active experiment directory; update it (or override with `make eval EXPERIMENT=...`) when starting a new experiment.
 - `check-env` auto-copies `.env.example` to `.env` if missing; real API keys still need to be filled in by hand.
 
 ## Git commits

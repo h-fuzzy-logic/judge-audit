@@ -6,19 +6,19 @@ Running log of how each part of this project actually works and why, built up in
 
 **What it's for:** Promptfoo is the eval framework that actually runs the LLM judges. It takes three things (prompts, providers, and test cases) and produces one row of raw output for every (test case × prompt × provider) combination.
 
-**How it's wired in this project** (`configs/promptfooconfig.yaml`):
-- **`prompts`.** The rubric templates in `configs/prompts/` (e.g. `rubric_v1_strict.txt`), each containing `{{context}}` and `{{response}}` placeholders. Both rubric variants are currently active, so every row gets judged twice.
+**How it's wired in this project** (each experiment gets its own config, e.g. `experiments/ragtruth/01-strict-vs-cot-rubric/promptfooconfig.yaml`):
+- **`prompts`.** The rubric templates in `configs/prompts/` (e.g. `rubric_v1_strict.txt`), shared across experiments rather than duplicated per experiment, each containing `{{context}}` and `{{response}}` placeholders. Both rubric variants are currently active, so every row gets judged twice.
 - **`providers`.** The judge LLMs to run. Currently just `google:gemini-3.5-flash-lite`; OpenAI/Anthropic entries exist but are commented out pending API keys.
-- **`tests`.** Points at `data/processed/rag_groundedness_150.csv` directly. Promptfoo turns each CSV column into a template variable automatically, so `context` and `response` fill the prompt placeholders. `human_groundedness_score` isn't used in the prompt itself, but rides along in the output row unused. That's what lets it be joined back against the judge's score later.
+- **`tests`.** Points at `data/processed/rag_groundedness_150.csv` directly (also shared across experiments run on this dataset). Promptfoo turns each CSV column into a template variable automatically, so `context` and `response` fill the prompt placeholders. `human_groundedness_score` isn't used in the prompt itself, but rides along in the output row unused. That's what lets it be joined back against the judge's score later.
 - **`defaultTest.assert: contains-json`.** A light, cheap check that the judge's output contains *some* valid JSON substring. It does not validate that the JSON has the right shape or a sane score. That's a correctness concern, not a formatting one, so it's handled downstream instead (see `src/extractors.py`).
 
-**Running it:** `make eval` (or `make docker-eval`) runs `npx promptfoo eval -c configs/promptfooconfig.yaml -o reports/results.json`. Output is one JSON file, `reports/results.json`, with one entry per (test case × prompt × provider). Each entry carries the judge's raw text response plus the original vars.
+**Running it:** `make eval` (or `make docker-eval`) runs `npx promptfoo eval -c $(EXPERIMENT)/promptfooconfig.yaml -o $(EXPERIMENT)/results.json`, where `EXPERIMENT` is a Makefile variable pointing at the active experiment directory. Output is one JSON file with one entry per (test case × prompt × provider); each entry carries the judge's raw text response plus the original vars.
 
 **What Promptfoo deliberately does *not* do here:** it does not parse the judge's raw output into a clean 0/1/2 score, and it does not compute agreement with human labels. Promptfoo *can* do inline transforms (a `transform:` hook that post-processes output before it's written), but this project keeps that parsing step as its own explicit, testable Python code (`src/extractors.py` + `scripts/extract_scores.py`) instead. See the extraction section below once it's added.
 
-**A path-resolution gotcha worth remembering:** relative paths inside `promptfooconfig.yaml` resolve relative to *the config file's own directory* (`configs/`), not the repo root. That's why `tests: ../data/processed/...` needs the `../`, and why prompt paths are `file://prompts/...` rather than `file://configs/prompts/...`. Got this wrong twice before landing on a working config.
+**A path-resolution gotcha worth remembering:** relative paths inside a `promptfooconfig.yaml` resolve relative to *the config file's own directory*, not the repo root. Since each experiment's config now lives three directories deep (`experiments/ragtruth/<experiment>/`), shared resources need `../../../` to reach the repo root: `tests: ../../../data/processed/rag_groundedness_150.csv` and `prompts: file://../../../configs/prompts/rubric_v1_strict.txt`. Got this wrong more than once before landing on a working config, both when the config first lived in `configs/` and again after moving it deeper for the multi-experiment layout.
 
-**Eval history:** every run also gets written to Promptfoo's own local store (`.promptfoo/`, bind-mounted into the container so it persists across runs). `make docker-view` launches Promptfoo's own browser UI (`promptfoo view`) against that history, separate from the `reports/*.json` files this project's own scripts read.
+**Eval history:** every run also gets written to Promptfoo's own local store (`.promptfoo/`, bind-mounted into the container so it persists across runs). `make docker-view` launches Promptfoo's own browser UI (`promptfoo view`) against that history, separate from each experiment's own `results.json`/`scored_results.csv` files that this project's own scripts read.
 
 ## Docker
 
@@ -30,7 +30,7 @@ Running log of how each part of this project actually works and why, built up in
 3. `npm install -g promptfoo@0.122.0`. Version-pinned, so a future `--no-cache` rebuild can't silently pull a different Promptfoo version
 4. `COPY . .`. Deliberately last, since it's the layer that changes on nearly every edit
 
-**`docker-compose.yml` bind-mounts everything meant to be edited live:** `data/`, `configs/`, `reports/`, `src/`, `scripts/`, `tests/`, `Makefile`, and `.promptfoo/` are all mounted from the host, so editing any of them takes effect immediately in the next `docker compose run`. No rebuild. A rebuild is only needed after touching `requirements.txt` (a new dependency) or the `Dockerfile` itself. Two things weren't bind-mounted at first and quietly served stale content until noticed: `tests/` (new test files were invisible to the container) and `Makefile` (edits to it were silently ignored, since the container just ran whatever was baked in at the last build).
+**`docker-compose.yml` bind-mounts everything meant to be edited live:** `data/`, `configs/`, `experiments/`, `src/`, `scripts/`, `tests/`, `Makefile`, and `.promptfoo/` are all mounted from the host, so editing any of them takes effect immediately in the next `docker compose run`. No rebuild. A rebuild is only needed after touching `requirements.txt` (a new dependency) or the `Dockerfile` itself. Two things weren't bind-mounted at first and quietly served stale content until noticed: `tests/` (new test files were invisible to the container) and `Makefile` (edits to it were silently ignored, since the container just ran whatever was baked in at the last build).
 
 **`PYTHONPATH=/app`** is set explicitly in the compose environment because running a script directly (`python scripts/extract_scores.py`) only puts the script's own directory on Python's import path, not the repo root. Without this, `from src.extractors import ...` fails with `ModuleNotFoundError` depending on how a script is invoked.
 
@@ -47,7 +47,7 @@ Standard library modules (`json`, `re`, `csv`, `argparse`, `pathlib`, `textwrap`
 ### pandas
 
 The one dependency nearly every script touches. Used for:
-- Reading CSVs (`data/processed/rag_groundedness_150.csv`, `reports/scored_results.csv`) and writing them back out
+- Reading CSVs (`data/processed/rag_groundedness_150.csv`, each experiment's `scored_results.csv`) and writing them back out
 - `groupby(["provider", "prompt"])` in `compute_agreement.py`, the mechanism that turns "one row per graded item" into "one summary per experimental condition"
 - `pd.isna()` in `summarize_calibration` to detect missing judge scores, since a CSV round-trip represents "missing" as float `NaN`, not Python `None`
 - Building the confusion matrix's labeled `DataFrame` (row/column names, not just the raw numpy array)
@@ -84,7 +84,7 @@ The test runner for everything in `tests/`. Notes specific to how it's used here
 - Plain `assert` statements throughout. No `unittest.TestCase`, since pytest rewrites bare `assert` to give rich failure diffs without needing that API
 - `@pytest.mark.parametrize` for the extractor's shape-based test cases (`tests/test_extractors.py`), with explicit `ids=` so failures still read as a named scenario rather than a numeric index
 - `capsys` fixture to assert on printed output (`test_print_confusion_matrices_outputs_group_header`)
-- `tmp_path` fixture for file-writing tests (`test_write_csv_round_trip`), so tests never touch the real `reports/` directory
+- `tmp_path` fixture for file-writing tests (`test_write_csv_round_trip`), so tests never touch a real experiment's output directory
 - No `import pytest` needed at all for the simplest tests. Only pulled in when a test actually uses a pytest-specific feature (`parametrize`, `approx`, `capsys`)
 
 ## Why Incremental Changes Matter
@@ -92,7 +92,7 @@ The test runner for everything in `tests/`. Notes specific to how it's used here
 Every bug hit while building this project was caught cheaply because each change was reviewed and smoke-tested in isolation before moving on to the next one:
 
 - Dataset schema mismatch in `prepare_dataset.py` (see the Hugging Face `datasets` note above)
-- Two relative-path errors in `configs/promptfooconfig.yaml` (see the Promptfoo section above)
+- Two relative-path errors in the promptfoo config file (see the Promptfoo section above)
 - A missing `make` binary in the Docker image (see the Docker section above)
 - An outdated Node version in the Docker image (see the Docker section above)
 

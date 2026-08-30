@@ -2,7 +2,7 @@
 src.extractors.extract_score, and writes a scored CSV for calibration analysis.
 
 Usage:
-    python scripts/extract_scores.py --results reports/results.json --output reports/scored_results.csv
+    python scripts/extract_scores.py --results <experiment_dir>/results.json --output <experiment_dir>/scored_results.csv
 """
 import argparse
 import csv
@@ -51,8 +51,8 @@ def write_csv(scored: list[dict], output_path: str) -> None:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--results", default="reports/results.json")
-    parser.add_argument("--output", default="reports/scored_results.csv")
+    parser.add_argument("--results", default="experiments/ragtruth/01-strict-vs-cot-rubric/results.json")
+    parser.add_argument("--output", default="experiments/ragtruth/01-strict-vs-cot-rubric/scored_results.csv")
     args = parser.parse_args()
 
     rows = load_results(args.results)

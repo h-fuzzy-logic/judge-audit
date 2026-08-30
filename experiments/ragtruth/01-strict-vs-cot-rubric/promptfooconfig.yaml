@@ -1,8 +1,8 @@
 description: "LLM-as-judge calibration: RAG groundedness scoring vs. human labels"
 
 prompts:
-  - file://prompts/rubric_v1_strict.txt
-  - file://prompts/rubric_v2_chain_of_thought.txt
+  - file://../../../configs/prompts/rubric_v1_strict.txt
+  - file://../../../configs/prompts/rubric_v2_chain_of_thought.txt
 
 providers:
   # - openai:gpt-4o-mini            # requires OPENAI_API_KEY
@@ -13,7 +13,7 @@ providers:
 # Each CSV column becomes a template variable ({{context}}, {{response}}, ...).
 # human_groundedness_score isn't used in the prompt but rides along in the
 # output row so it can be joined back in during calibration analysis.
-tests: ../data/processed/rag_groundedness_150.csv
+tests: ../../../data/processed/rag_groundedness_150.csv
 
 defaultTest:
   assert:
