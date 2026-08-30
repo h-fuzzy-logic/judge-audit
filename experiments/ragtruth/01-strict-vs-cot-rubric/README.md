@@ -10,13 +10,7 @@ Measure LLM agreement with human labels using Cohen's κ, quadratic weighted κ,
 - **H0:** Chain-of-thought reasoning makes no difference to judge/human agreement.
 - **H1:** Chain-of-thought reasoning improves judge/human agreement over a strict, direct-scoring rubric.
 
-**Not yet tested** (no experiments run yet):
-- Position bias (does response order affect the score?)
-- Verbosity bias (does a longer/padded response get scored more favorably regardless of accuracy?)
-- Self-preference (does a judge favor output from its own model family?)
-- Tautological rubrics (does a vague/circular rubric inflate agreement artificially?)
-- Cross-provider comparison (OpenAI/Anthropic judges are configured but not yet run, pending API keys)
-
+See [`docs/research.md`](../../../docs/research.md) for the project-wide roadmap of hypotheses not yet tested.
 
 ## Dataset Description
 See [`experiments/ragtruth/ragtruth.md`](../ragtruth.md) for the RAGTruth dataset description.
@@ -58,8 +52,6 @@ The `human_groundedness_score` used as ground truth in this experiment (derived 
 - **Caveat on that finding:** `rubric_v2_chain_of_thought` asks the judge to break the response into claims and categorize each one, which structurally resembles how the ground-truth label itself was built (span-by-span categorization, then collapsed). `rubric_v1_strict` asks for a single holistic guess with no such breakdown. Part of the κ improvement may reflect that the CoT process happens to match the label's own construction method, not that chain-of-thought reasoning is generally better. This experiment can't separate those two explanations; see the label-derivation limitation above.
 - **Provider note:** an earlier attempt used `google:gemini-3.7-flash`, which hit frequent `503 UNAVAILABLE` ("high demand") errors and ran slowly, so the project switched to `gemini-3.5-flash-lite` for stability and speed. Worth flagging as a limitation: flash-lite is a smaller/faster tier, so this result may understate what a stronger reasoning model would show. Not yet tested against a larger Gemini tier or a different provider.
 
-*(Next experiments, multi-provider comparison and bias probes, are not yet run. Add them here once they are.)*
-
-
 ## Future Experiments
+- See [`docs/research.md`](../../../docs/research.md) for the project-wide roadmap of hypotheses not yet tested (multi-provider comparison, bias probes).
 - See [Annotation Methodology](../ragtruth.md#annotation-methodology) and the [label-derivation weakness](#weakness-label-derivation-isnt-a-human-holistic-rating) above for known limitations of this sample not yet addressed (label collapsing, no direct human holistic re-rating).
