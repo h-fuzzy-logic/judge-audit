@@ -21,8 +21,7 @@ Measure LLM agreement with human labels using Cohen's κ, quadratic weighted κ,
 ## Dataset Description
 See [`experiments/ragtruth/ragtruth.md`](../ragtruth.md) for the RAGTruth dataset description.
 
-## Data Processing In This Repo
-### Experiment 1
+## Data Processing
 
 Built by `scripts/prepare_dataset.py`, resulting in [150 rows](data/processed/rag_groundedness_150.csv) from the train set. 
 
@@ -38,12 +37,10 @@ Built by `scripts/prepare_dataset.py`, resulting in [150 rows](data/processed/ra
 - **Sampling:** stratified, 50 rows per `human_groundedness_score` class, fixed seed (42), for **150 total rows**, then shuffled (same seed) before being written out.
 - **Final columns written to CSV:** `context`, `response`, `human_groundedness_score`, exactly the three fields Promptfoo's judge prompts and this project's scoring scripts need.
 
-#### Weakness: label derivation isn't a human holistic rating.
+### Weakness: label derivation isn't a human holistic rating.
 The `human_groundedness_score` used as ground truth in this experiment (derived above) is a rule applied to aggregated `evident_conflict`/`baseless_info` span counts, not a human directly rating a response 0-2. The judge, by contrast, produces its 0-2 score directly from the raw context and response with no visibility into spans or counts at all. This matters for interpreting the results below: every disagreement in the confusion matrices could reflect either a genuine judge mistake, or the judge and the collapsing rule simply bucketing severity differently (a response with 1 baseless-info span and one with 15 both collapse to the same "1," but a judge reading the raw text has no reason to treat them as equally grounded). This experiment can't tell those two cases apart, so the κ scores below should be read as a lower bound on judge quality, not a clean measure of it, since part of the "disagreement" may be an artifact of how the label itself was built rather than the judge being wrong. Not yet validated against a human directly re-rating a sample holistically.
 
-## Experiments Done
-
-### Experiment 1: Strict rubric vs. chain-of-thought rubric
+## Results: Strict rubric vs. chain-of-thought rubric
 
 - **Setup:** one provider (`google:gemini-3.5-flash-lite`), two rubric prompts, same 150 items each, for 300 judge calls total.
 - **Rubrics compared:** `rubric_v1_strict` (score only, no reasoning requested) vs. `rubric_v2_chain_of_thought` (step-by-step claim analysis before scoring).
@@ -64,5 +61,5 @@ The `human_groundedness_score` used as ground truth in this experiment (derived 
 *(Next experiments, multi-provider comparison and bias probes, are not yet run. Add them here once they are.)*
 
 
-### Future Experiments
+## Future Experiments
 - See [Annotation Methodology](../ragtruth.md#annotation-methodology) and the [label-derivation weakness](#weakness-label-derivation-isnt-a-human-holistic-rating) above for known limitations of this sample not yet addressed (label collapsing, no direct human holistic re-rating).
