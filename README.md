@@ -42,13 +42,15 @@ judge-eval-harness/
 ├── data/processed/
 │   └── rag_groundedness_150.csv # the 150-item hand-labeled dataset
 ├── docs/
-│   ├── research.md              # hypotheses tested, findings, limitations
+│   ├── research.md              # index of hypotheses tested, links to each experiment
 │   ├── approaches.md            # how each part of the tooling works
-│   └── tastes.md                # research/engineering taste notes
+│   ├── tastes.md                # research/engineering taste notes
+│   └── llm-as-judge.md          # background reference on LLM-as-judge as a technique
 ├── experiments/
 │   └── ragtruth/
 │       ├── ragtruth.md          # RAGTruth dataset description
 │       └── 01-strict-vs-cot-rubric/
+│           ├── README.md             # this experiment's hypothesis, methodology, and findings
 │           ├── promptfooconfig.yaml  # this experiment's judge eval orchestration
 │           ├── scored_results.csv    # per-item judge vs. human scores
 │           ├── agreement_summary.csv # kappa/QWK/agreement per condition
@@ -70,7 +72,8 @@ Note: each experiment's `results.json` (raw Promptfoo output) and `.promptfoo/` 
 
 Deeper documentation than this README needs, organized by purpose:
 
-- [Research](docs/research.md): Dataset, hypotheses, experiments and results.
+- [Research](docs/research.md): Index of hypotheses tested, linking out to each experiment's own write-up.
 - [Technologies](docs/approaches.md): Why each technology was chosen and how it is used in this repo (Promptfoo, Docker, Python libraries).
 - [Research Taste and Engineering Taste](docs/tastes.md): Judgments and principles behind the decisions in this repo.
+- [LLM-as-Judge](docs/llm-as-judge.md): Background on LLM-as-judge as a technique, and how the tasks it's commonly used for relate to the calibration problem this project studies.
 - [CLAUDE.md](CLAUDE.md): Conventions for this repo.
