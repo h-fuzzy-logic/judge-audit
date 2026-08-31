@@ -1,11 +1,17 @@
 # Experiment 1 
 
-**Overarching question:** "How do you know your grader is right?" Measuring whether an LLM-as-judge's groundedness scores actually agree with human labels, rather than assuming a judge is reliable by default.
+## AI Safety Relevance 
+Can you trust your LLM-as-Judge? How do you know if its grading is right? 
+
+Before being deployed across contexts like red teaming pipelines, capability benchmarks, RLHF training-signal generation, and production monitoring LLM judges should be validated using meta-evaluation techniques.
+
+## Experiment Goal
+Measure LLM agreement with human labels on the task source groundedness using Cohen's κ, quadratic weighted κ, exact agreement rate. 
 
 
 ## Hypothesis Tested
 
-Measure LLM agreement with human labels using Cohen's κ, quadratic weighted κ, exact agreement rate, on the task source-groundedness. 
+
 
 **Hypothesis tested so far:** *Does judge prompt design, specifically asking for chain-of-thought reasoning before a score versus asking for a direct score only, change how well the judge agrees with human labels?*
 - **H0:** Chain-of-thought reasoning makes no difference to judge/human agreement.

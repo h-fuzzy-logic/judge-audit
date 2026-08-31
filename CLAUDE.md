@@ -23,3 +23,4 @@
 
 - Text generated for this project (README, docs) should be structured and skimmable: clear headings, heavy use of bulleted lists over prose paragraphs, so the outline is visible at a glance.
 - No em dashes. Use a comma, parentheses, or a period instead.
+- Diagrams use Mermaid fenced code blocks (```` ```mermaid ````), not ASCII art. GitHub renders Mermaid natively with no build step; ASCII art reliably misaligns outside a code fence and isn't guaranteed monospace even inside one on every renderer. VS Code's built-in preview needs the "Markdown Preview Mermaid Support" extension to render it locally.
