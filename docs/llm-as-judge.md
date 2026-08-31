@@ -20,6 +20,8 @@ These are some evaluation dimensions, what the judge is scoring:
 
 The common thread across all of these: an LLM judge is doing the scoring, and its reliability is rarely checked against human labels. Groundedness is one of the cleaner criteria to calibrate against because the labeling itself is fairly objective (contradiction vs. not); helpfulness and creative-writing-style criteria are much harder to calibrate against because human agreement on those is often lower to begin with.
 
+Which agreement metrics apply to a given criterion depends on how it's judged, not which criterion it is, several of the criteria above (helpfulness especially) can be judged in more than one way. See [`agreement-metrics.md`](agreement-metrics.md#judgment-structure-determines-metric-choice-not-the-dimension) for that breakdown.
+
 ## Meta-evaluation: validating the judge before it's trusted anywhere
 
 Before a judge's score is trusted for any deployment context, it should go through **meta-evaluation** (also called judge calibration/validation): a fixed, human-labeled dataset is used to check whether the judge itself is reliable. This comes *before* the contexts below, not alongside them, a judge that hasn't been meta-evaluated is one nobody has checked is trustworthy yet. [Experiment 1](../experiments/ragtruth/01-strict-vs-cot-rubric/README.md) is an example: it studies the source-groundedness criterion via meta-evaluation.

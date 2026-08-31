@@ -45,7 +45,8 @@ judge-eval-harness/
 │   ├── research.md              # index of hypotheses tested, links to each experiment
 │   ├── approaches.md            # how each part of the tooling works
 │   ├── tastes.md                # research/engineering taste notes
-│   └── llm-as-judge.md          # background reference on LLM-as-judge as a technique
+│   ├── llm-as-judge.md          # background reference on LLM-as-judge as a technique
+│   └── agreement-metrics.md     # background reference on judge/human agreement statistics
 ├── experiments/
 │   └── ragtruth/
 │       ├── ragtruth.md          # RAGTruth dataset description
@@ -76,4 +77,5 @@ Deeper documentation than this README needs, organized by purpose:
 - [Technologies](docs/approaches.md): Why each technology was chosen and how it is used in this repo (Promptfoo, Docker, Python libraries).
 - [Research Taste and Engineering Taste](docs/tastes.md): Judgments and principles behind the decisions in this repo.
 - [LLM-as-Judge](docs/llm-as-judge.md): Background on LLM-as-judge as a technique, and how the tasks it's commonly used for relate to the calibration problem this project studies.
+- [Agreement Metrics](docs/agreement-metrics.md): Background on the statistics used to measure judge/human agreement, including ones considered but not used.
 - [CLAUDE.md](CLAUDE.md): Conventions for this repo.
