@@ -5,7 +5,9 @@ import pytest
 from src.metrics import (
     compute_cohen_kappa,
     compute_confusion_matrix,
+    compute_precision_for_class,
     compute_quadratic_weighted_kappa,
+    compute_recall_for_class,
     summarize_calibration,
 )
 
@@ -80,6 +82,38 @@ def test_summarize_calibration_excludes_nan_judge_scores():
     summary = summarize_calibration(human, judge)
     assert summary["n_valid"] == 3
     assert summary["n_parse_failures"] == 1
+
+
+def test_recall_for_class_counts_only_that_classs_human_items():
+    human = [0, 0, 0, 1, 1, 2]
+    judge = [0, 0, 1, 1, 1, 2]  # 2 of 3 class-0 items caught correctly
+    assert compute_recall_for_class(human, judge, label=0) == pytest.approx(2 / 3)
+
+
+def test_recall_for_class_is_none_when_class_absent_from_human():
+    human = [1, 1, 2, 2]
+    judge = [0, 1, 2, 2]
+    assert compute_recall_for_class(human, judge, label=0) is None
+
+
+def test_precision_for_class_counts_only_that_classs_judge_predictions():
+    human = [0, 1, 0, 1, 2]
+    judge = [0, 0, 0, 1, 2]  # judge predicted class 0 three times, 2 were actually class 0
+    assert compute_precision_for_class(human, judge, label=0) == pytest.approx(2 / 3)
+
+
+def test_precision_for_class_is_none_when_judge_never_predicts_it():
+    human = [0, 1, 2]
+    judge = [1, 1, 2]
+    assert compute_precision_for_class(human, judge, label=0) is None
+
+
+def test_summarize_calibration_includes_class_0_recall_and_precision():
+    human = [0, 0, 1, 1, 2, 2]
+    judge = [0, 1, 1, 1, 2, 0]
+    summary = summarize_calibration(human, judge)
+    assert summary["recall_class_0"] == pytest.approx(0.5)  # caught 1 of 2 class-0 items
+    assert summary["precision_class_0"] == pytest.approx(0.5)  # predicted class 0 twice, 1 correct
 
 
 def test_summarize_calibration_all_missing_returns_none_metrics():

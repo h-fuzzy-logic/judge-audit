@@ -1,4 +1,6 @@
 """Agreement metrics between human labels and judge scores."""
+from functools import partial
+
 import numpy as np
 import pandas as pd
 from sklearn.metrics import cohen_kappa_score, confusion_matrix
@@ -16,15 +18,51 @@ def compute_exact_agreement_rate(human_scores, judge_scores) -> float:
     return float(np.mean([h == j for h, j in zip(human_scores, judge_scores)]))
 
 
+def compute_recall_for_class(human_scores, judge_scores, label: int):
+    """Of items whose human label is `label`, what fraction did the judge
+    also score as `label`. None (not 0.0) if that class doesn't appear in
+    human_scores at all, since recall is undefined with no denominator, not
+    zero.
+    """
+    human = np.asarray(human_scores)
+    judge = np.asarray(judge_scores)
+    mask = human == label
+    if not mask.any():
+        return None
+    return float(np.mean(judge[mask] == label))
+
+
+def compute_precision_for_class(human_scores, judge_scores, label: int):
+    """Of items the judge scored as `label`, what fraction actually have
+    that human label. None (not 0.0) if the judge never predicted that
+    class, since precision is undefined with no denominator, not zero.
+    """
+    human = np.asarray(human_scores)
+    judge = np.asarray(judge_scores)
+    mask = judge == label
+    if not mask.any():
+        return None
+    return float(np.mean(human[mask] == label))
+
+
 # Scalar agreement metrics: name -> (human_scores, judge_scores) -> float.
 # Add a new metric by adding one entry here - summarize_calibration picks it
 # up automatically, no other code needs to change. Metrics that don't fit
 # this (human, judge) -> float shape, like the confusion matrix below, stay
 # as their own standalone functions instead of being forced into the registry.
+#
+# recall_class_0 / precision_class_0 are registered here rather than a task-
+# specific "ungrounded_recall" name, since this module stays task-agnostic;
+# what class 0 *means* (e.g. "Ungrounded") is defined per-experiment, not
+# here. For a hallucination-detection task specifically, class 0 recall is
+# the safety-critical number: a miss there means the judge waved through a
+# fabricated or contradictory response as acceptable.
 METRICS = {
     "cohen_kappa": compute_cohen_kappa,
     "quadratic_weighted_kappa": compute_quadratic_weighted_kappa,
     "exact_agreement_rate": compute_exact_agreement_rate,
+    "recall_class_0": partial(compute_recall_for_class, label=0),
+    "precision_class_0": partial(compute_precision_for_class, label=0),
 }
 
 
