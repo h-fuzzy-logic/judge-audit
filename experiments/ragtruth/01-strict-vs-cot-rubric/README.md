@@ -35,6 +35,15 @@ Built by `scripts/prepare_dataset.py`, resulting in [150 rows](../../../data/pro
 ### Weakness: label derivation isn't a human holistic rating.
 The `human_groundedness_score` used as ground truth in this experiment (derived above) is a rule applied to aggregated `evident_conflict`/`baseless_info` span counts, not a human directly rating a response 0-2. The judge, by contrast, produces its 0-2 score directly from the raw context and response with no visibility into spans or counts at all. This matters for interpreting the results below: every disagreement in the confusion matrices could reflect either a genuine judge mistake, or the judge and the collapsing rule simply bucketing severity differently (a response with 1 baseless-info span and one with 15 both collapse to the same "1," but a judge reading the raw text has no reason to treat them as equally grounded). This experiment can't tell those two cases apart, so the κ scores below should be read as a lower bound on judge quality, not a clean measure of it, since part of the "disagreement" may be an artifact of how the label itself was built rather than the judge being wrong. Not yet validated against a human directly re-rating a sample holistically.
 
+## How the Judge is Instructed to Score
+
+The experimental manipulation is the wording of the scoring prompt itself. Both rubrics show the judge the same 0-2 scale, the same `context`, and the same `response`, only the instructions around them differ.
+
+- **[`rubric_v1_strict.txt`](../../../configs/prompts/rubric_v1_strict.txt) ("strict"):** asks for a score directly. The judge is shown the scale and told to output a JSON object with a score and a one-sentence justification, no intermediate reasoning is requested.
+- **[`rubric_v2_chain_of_thought.txt`](../../../configs/prompts/rubric_v2_chain_of_thought.txt) ("chain-of-thought" / CoT):** asks the judge to (1) list each factual claim in the response, (2) check each claim against the context individually as supported, unsupported, or contradicted, then (3) assign a score based on that claim-by-claim analysis. The output JSON is the same shape, it just comes after this reasoning step instead of standing alone.
+
+This is the one variable this experiment isolates, same model, same scale, same items, same output format, so the results below are attributable to this difference in scoring instructions and nothing else the experiment varied. (Note the claim-by-claim structure of the CoT rubric mirrors how the ground-truth label itself was built, see the Caveat under Results.)
+
 ## Results: Strict rubric vs. chain-of-thought rubric
 
 - **Setup:** one provider (`google:gemini-3.5-flash-lite`), two rubric prompts, same 150 items each, for 300 judge calls total.
@@ -48,10 +57,29 @@ The `human_groundedness_score` used as ground truth in this experiment (derived 
 
   *(Corrected after adding the quality filter described above; see the Data Processing Correction note below.)*
 
-- **Finding:** chain-of-thought reasoning meaningfully improved agreement on all three metrics, so **H1 is supported** for this provider. The confusion matrix shows *why*: the strict rubric badly over-predicts "partially grounded" (1). Only 13/50 fully-ungrounded (human=0) items were caught correctly, with 31 misclassified as 1. The CoT rubric catches 28/50 of those same cases correctly. The fully-grounded (human=2) row is close between the two rubrics (37/50 vs 40/50 correct), so the improvement is concentrated in catching actual contradictions, not a uniform lift everywhere.
+- **Statistical significance:** point estimates alone can't say whether the strict-vs-CoT gap is bigger than sampling noise at n=150. A paired bootstrap test (10,000 resamples, [`src/significance.py`](../../../src/significance.py), same 150 items scored under both rubrics) gives:
+
+  | Metric | Observed diff (CoT − strict) | 95% CI | p-value | Significant at α=0.05? |
+  |---|---|---|---|---|
+  | Cohen's κ | +0.13 | [0.02, 0.24] | 0.027 | **Yes** |
+  | Quadratic Weighted κ | +0.07 | [-0.03, 0.17] | 0.166 | No |
+  | Exact agreement rate | +0.087 | [0.007, 0.167] | 0.040 | **Yes** |
+
+- **Finding:** chain-of-thought reasoning improved agreement on all three metrics as point estimates, but only two of the three (Cohen's κ, exact agreement rate) reach statistical significance at n=150, the QWK gap's confidence interval crosses zero. **H1 is supported for unweighted agreement, not conclusively for QWK.** The confusion matrix shows *why* the effect exists where it does: the strict rubric badly over-predicts "partially grounded" (1). Only 13/50 fully-ungrounded (human=0) items were caught correctly, with 31 misclassified as 1. The CoT rubric catches 28/50 of those same cases correctly. The fully-grounded (human=2) row is close between the two rubrics (37/50 vs 40/50 correct), so the improvement is concentrated in catching actual contradictions, not a uniform lift everywhere, which also explains why QWK (which penalizes near-miss errors less than far-miss errors) shows a smaller, non-significant gap: most of the remaining errors on both rubrics are still off by only one point, not two.
 - **Data Processing Correction:** the original run of this experiment didn't filter RAGTruth's `quality` column, so a small number of refusals/truncated generations were present in the 150-item sample, misclassified as "Fully Grounded" purely because a refusal has no hallucination spans to detect. After adding the quality filter (see Feature Selection above) and re-sampling, re-running both rubrics against the corrected 150-item sample moved κ from 0.38 → 0.40 (strict) and 0.54 → 0.53 (CoT), both within normal sampling noise for n=150. **The finding is unchanged**: CoT still meaningfully outperforms the strict rubric on every metric, so this correction doesn't overturn H1, it just removes a known confound from the underlying sample.
 - **Caveat on that finding:** `rubric_v2_chain_of_thought` asks the judge to break the response into claims and categorize each one, which structurally resembles how the ground-truth label itself was built (span-by-span categorization, then collapsed). `rubric_v1_strict` asks for a single holistic guess with no such breakdown. Part of the κ improvement may reflect that the CoT process happens to match the label's own construction method, not that chain-of-thought reasoning is generally better. This experiment can't separate those two explanations; see the label-derivation limitation above.
 - **Provider note:** an earlier attempt used `google:gemini-3.7-flash`, which hit frequent `503 UNAVAILABLE` ("high demand") errors and ran slowly, so the project switched to `gemini-3.5-flash-lite` for stability and speed. Worth flagging as a limitation: flash-lite is a smaller/faster tier, so this result may understate what a stronger reasoning model would show. Not yet tested against a larger Gemini tier or a different provider.
+
+## Weaknesses of Experiment
+
+What this experiment does and doesn't establish, beyond the label-derivation and CoT-vs-label-construction caveats already noted above:
+
+- **Single model, so this doesn't generalize to "judges" broadly.** Everything above is one judge (`google:gemini-3.5-flash-lite`) on one comparison. The result is a real, specific finding about that model, not a general claim about chain-of-thought prompting for LLM judges.
+- **Model size confounds the effect.** Flash-lite is a small/fast tier (see Provider note above). A smaller model plausibly benefits more from explicit reasoning scaffolding than a larger one that might already reason adequately in a single shot, so the CoT-vs-strict gap measured here could shrink or vanish on a stronger judge. Not yet tested against a larger Gemini tier or a different provider.
+- **One rubric wording per condition.** One strict prompt was compared against one CoT prompt. Prompt phrasing itself is a large lever on LLM output independent of the CoT/non-CoT distinction, so this measures these two specific prompts, not "CoT-style instructions" vs. "strict-style instructions" as general strategies. A differently-worded strict prompt might close part of the gap.
+- **Not uniformly significant across metrics.** The paired bootstrap test above shows Cohen's κ and exact agreement rate clear significance at n=150, but QWK does not. The finding is real but metric-dependent, not a clean win on every axis.
+- **One dataset, one domain, English only.** RAGTruth's three task types (QA, Summary, Data2txt) and its label-derivation rule are specific to this corpus; nothing here shows the CoT effect transfers to a different groundedness dataset or a different domain (medical or legal RAG, say).
+- **No held-out replication.** The RAGTruth `test` split (2,700 rows, untouched by this project, see [`ragtruth.md`](../ragtruth.md)) would be the natural place to check whether this finding replicates on fresh data before trusting it for rubric design elsewhere.
 
 ## Future Experiments
 - See [`docs/research.md`](../../../docs/research.md) for the project-wide roadmap of hypotheses not yet tested (multi-provider comparison, bias probes).
