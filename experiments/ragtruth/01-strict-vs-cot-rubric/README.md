@@ -3,27 +3,38 @@
 ## AI Safety Relevance 
 Can you trust your LLM-as-Judge? How do you know if its grading is right? 
 
-Before being deployed across contexts like red teaming pipelines, capability benchmarks, RLHF training-signal generation, and production monitoring LLM judges should be validated using meta-evaluation techniques.
+Before being deployed across contexts like red teaming pipelines, capability benchmarks, RLHF training-signal generation, and production monitoring, LLM judges should be validated using meta-evaluation techniques.
 
-## Experiment Goal
-Measure LLM agreement with human labels on the task source groundedness using Cohen's κ, quadratic weighted κ, exact agreement rate. 
+## Research Question
+Does asking for chain-of-thought reasoning in a judge prompt change how well the judge agrees with human labels, compared to asking for a direct score only?  
+- **H0 (null):** Chain-of-thought reasoning makes no difference to judge/human agreement.
+- **H1 (alternative):** Chain-of-thought reasoning improves judge/human agreement over a strict, direct-scoring rubric.
 
+## Setup
 
-## Hypothesis Tested
+### Model as Judge
+- One provider (`google:gemini-3.5-flash-lite`)
 
-
-
-**Hypothesis tested so far:** *Does judge prompt design, specifically asking for chain-of-thought reasoning before a score versus asking for a direct score only, change how well the judge agrees with human labels?*
-- **H0:** Chain-of-thought reasoning makes no difference to judge/human agreement.
-- **H1:** Chain-of-thought reasoning improves judge/human agreement over a strict, direct-scoring rubric.
-
-See [`docs/research.md`](../../../docs/research.md) for the project-wide roadmap of hypotheses not yet tested.
-
-## Dataset Description
+### Data Used 
 See [`experiments/ragtruth/ragtruth.md`](../ragtruth.md) for the RAGTruth dataset description.
 
-## Data Processing
+### How the Judge is Instructed to Score
+The judge is given two prompts with different instructions about how to generate the score. Both prompts ask for a score from a 0-2 scale and are given the same:
+- Source passage(s) the response should be grounded in
+- LLM-generated response being evaluated 
 
+#### Judge Prompt 1 (Ask for Score Directly)
+The [first prompt](../../../configs/prompts/rubric_v1_strict.txt) includes instructions to output a JSON object with a score and a one-sentence justification. No intermediate reasoning is requested.
+
+#### Judge Prompt 2 (Include Chain of Thought / CoT)
+The [second prompt](../../../configs/prompts/rubric_v2_chain_of_thought.txt) 
+asks the judge to (1) list each factual claim in the response, (2) check each claim against the context individually as supported, unsupported, or contradicted, then (3) assign a score based on that claim-by-claim analysis. The output JSON is the same shape as prompt 1.
+
+(Most likely delete this section)
+This is the one variable this experiment isolates, same model, same scale, same items, same output format, so the results below are attributable to this difference in scoring instructions and nothing else the experiment varied. (Note the claim-by-claim structure of the CoT rubric mirrors how the ground-truth label itself was built, see the Caveat under Results.)
+
+
+### Data Processing
 Built by `scripts/prepare_dataset.py`, resulting in [150 rows](../../../data/processed/source_groundedness_150.csv) from the train set. 
 
 - **Columns used:** `context`, `output` (renamed `response`), `hallucination_labels_processed`, and `quality` (used only as a filter, not carried into the final CSV).
@@ -41,18 +52,9 @@ Built by `scripts/prepare_dataset.py`, resulting in [150 rows](../../../data/pro
 ### Weakness: label derivation isn't a human holistic rating.
 The `human_groundedness_score` used as ground truth in this experiment (derived above) is a rule applied to aggregated `evident_conflict`/`baseless_info` span counts, not a human directly rating a response 0-2. The judge, by contrast, produces its 0-2 score directly from the raw context and response with no visibility into spans or counts at all. This matters for interpreting the results below: every disagreement in the confusion matrices could reflect either a genuine judge mistake, or the judge and the collapsing rule simply bucketing severity differently (a response with 1 baseless-info span and one with 15 both collapse to the same "1," but a judge reading the raw text has no reason to treat them as equally grounded). This experiment can't tell those two cases apart, so the κ scores below should be read as a lower bound on judge quality, not a clean measure of it, since part of the "disagreement" may be an artifact of how the label itself was built rather than the judge being wrong. Not yet validated against a human directly re-rating a sample holistically.
 
-## How the Judge is Instructed to Score
-
-The experimental manipulation is the wording of the scoring prompt itself. Both rubrics show the judge the same 0-2 scale, the same `context`, and the same `response`, only the instructions around them differ.
-
-- **[`rubric_v1_strict.txt`](../../../configs/prompts/rubric_v1_strict.txt) ("strict"):** asks for a score directly. The judge is shown the scale and told to output a JSON object with a score and a one-sentence justification, no intermediate reasoning is requested.
-- **[`rubric_v2_chain_of_thought.txt`](../../../configs/prompts/rubric_v2_chain_of_thought.txt) ("chain-of-thought" / CoT):** asks the judge to (1) list each factual claim in the response, (2) check each claim against the context individually as supported, unsupported, or contradicted, then (3) assign a score based on that claim-by-claim analysis. The output JSON is the same shape, it just comes after this reasoning step instead of standing alone.
-
-This is the one variable this experiment isolates, same model, same scale, same items, same output format, so the results below are attributable to this difference in scoring instructions and nothing else the experiment varied. (Note the claim-by-claim structure of the CoT rubric mirrors how the ground-truth label itself was built, see the Caveat under Results.)
 
 ## Results: Strict rubric vs. chain-of-thought rubric
 
-- **Setup:** one provider (`google:gemini-3.5-flash-lite`), two rubric prompts, same 150 items each, for 300 judge calls total.
 - **Rubrics compared:** `rubric_v1_strict` (score only, no reasoning requested) vs. `rubric_v2_chain_of_thought` (step-by-step claim analysis before scoring).
 - **Results:**
 
@@ -95,7 +97,8 @@ What this experiment does and doesn't establish, beyond the label-derivation and
 - **Not uniformly significant across metrics.** The paired bootstrap test above shows Cohen's κ, exact agreement rate, and class 0 recall all clear significance at n=150 (class 0 recall by the widest margin, p=0.0002), but QWK does not, and the small precision gain on class 0 isn't significant either. The finding is real but metric-dependent, not a clean win on every axis.
 - **One dataset, one domain, English only.** RAGTruth's three task types (QA, Summary, Data2txt) and its label-derivation rule are specific to this corpus; nothing here shows the CoT effect transfers to a different groundedness dataset or a different domain (medical or legal RAG, say).
 - **No held-out replication.** The RAGTruth `test` split (2,700 rows, untouched by this project, see [`ragtruth.md`](../ragtruth.md)) would be the natural place to check whether this finding replicates on fresh data before trusting it for rubric design elsewhere.
+- See [Annotation Methodology](../ragtruth.md#annotation-methodology) and the [label-derivation weakness](#weakness-label-derivation-isnt-a-human-holistic-rating) above for known limitations of this sample not yet addressed (label collapsing, no direct human holistic re-rating).
 
 ## Future Experiments
 - See [`docs/research.md`](../../../docs/research.md) for the project-wide roadmap of hypotheses not yet tested (multi-provider comparison, bias probes).
-- See [Annotation Methodology](../ragtruth.md#annotation-methodology) and the [label-derivation weakness](#weakness-label-derivation-isnt-a-human-holistic-rating) above for known limitations of this sample not yet addressed (label collapsing, no direct human holistic re-rating).
+
