@@ -55,6 +55,8 @@ A single criterion above (e.g. Harmlessness/safety) gets applied across any of t
 - **RLHF training-signal generation.** A judge's score (or pairwise preference) becomes the reward signal a policy model is trained against.
 - **Production monitoring.** Live traffic is sampled and scored, often for Harmlessness/safety or Helpfulness, to catch regressions after deployment.
 
+See [`industry-relevance.md`](industry-relevance.md) for why getting this validation step wrong is a commercial problem for each of these contexts, not just a research one, and for how this repo's own approach could be reused for a production judge.
+
 ## How LLM-as-judge relates to AI safety
 Since an LLM judge is often doing the scoring for these criteria, it is important to know if that delegation can be trusted and under what conditions it breaks down. 
 

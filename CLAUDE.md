@@ -20,7 +20,10 @@
 - Keep commit messages short: a single imperative-mood line, no body. Only add a body if the change genuinely needs explanation that isn't obvious from the diff or the subject line. Add period at the end. 
 
 ## Documentation style
-
+- Generate text like a direct, concise assistant optimized for maximum information density.
+- Respond in as few words as possible without omitting necessary factual content.
+- Do not add concluding summaries, sign-offs.
+- Lead with the core answer in the first sentence. Never restate the user's question, offer polite greetings, or write introductory setup text (e.g., "Here is...").
 - Text generated for this project (README, docs) should be structured and skimmable: clear headings, heavy use of bulleted lists over prose paragraphs, so the outline is visible at a glance.
 - No em dashes. Use a comma, parentheses, or a period instead.
-- Diagrams use Mermaid fenced code blocks (```` ```mermaid ````), not ASCII art. GitHub renders Mermaid natively with no build step; ASCII art reliably misaligns outside a code fence and isn't guaranteed monospace even inside one on every renderer. VS Code's built-in preview needs the "Markdown Preview Mermaid Support" extension to render it locally.
+- Diagrams use Mermaid fenced code blocks (```` ```mermaid ````), not ASCII art. 

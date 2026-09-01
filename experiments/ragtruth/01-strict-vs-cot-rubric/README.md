@@ -1,9 +1,9 @@
 # Experiment 1 
 
 ## AI Safety Relevance 
-Can you trust your LLM-as-Judge? How do you know if its grading is right? 
+Before LLM judges are deployed for red teaming pipelines, capability benchmarks, RLHF training-signal generation, or production monitoring, they should be validated using meta-evaluation techniques.
 
-Before being deployed across contexts like red teaming pipelines, capability benchmarks, RLHF training-signal generation, and production monitoring, LLM judges should be validated using meta-evaluation techniques.
+It is important to verify you can trust your LLM-as-Judge and know that its grading is right for your data. 
 
 ## Research Question
 Does asking for chain-of-thought reasoning in a judge prompt change how well the judge agrees with human labels, compared to asking for a direct score only?  

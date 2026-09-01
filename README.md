@@ -46,7 +46,8 @@ judge-eval-harness/
 │   ├── approaches.md            # how each part of the tooling works
 │   ├── tastes.md                # research/engineering taste notes
 │   ├── llm-as-judge.md          # background reference on LLM-as-judge as a technique
-│   └── agreement-metrics.md     # background reference on judge/human agreement statistics
+│   ├── agreement-metrics.md     # background reference on judge/human agreement statistics
+│   └── industry-relevance.md    # why judge evaluation matters commercially, and how to reuse this approach
 ├── experiments/
 │   └── ragtruth/
 │       ├── ragtruth.md          # RAGTruth dataset description
@@ -78,4 +79,5 @@ Deeper documentation than this README needs, organized by purpose:
 - [Research Taste and Engineering Taste](docs/tastes.md): Judgments and principles behind the decisions in this repo.
 - [LLM-as-Judge](docs/llm-as-judge.md): Background on LLM-as-judge as a technique, and how the tasks it's commonly used for relate to the calibration problem this project studies.
 - [Agreement Metrics](docs/agreement-metrics.md): Background on the statistics used to measure judge/human agreement, including ones considered but not used.
+- [Industry Relevance](docs/industry-relevance.md): Why judge evaluation is a commercial problem, not just a research one, and how this repo's approach could be reused for a production judge.
 - [CLAUDE.md](CLAUDE.md): Conventions for this repo.
