@@ -7,6 +7,13 @@
 - LLM judges feed red-teaming pipelines, capability benchmarks, RLHF training-signal generation, and production monitoring. A biased judge propagates that bias into every downstream use.
 - Meta-evaluation (measuring judge/human agreement on a labeled sample) is the check that the judge's grading is trustworthy for your data. This experiment is one such check.
 
+## Purpose
+
+Run an end-to-end dry run of the evaluation pipeline using a sample size of $n=150$.
+
+### Key Risk 
+Because the Chain-of-Thought (CoT) rubric matches the ground-truth label structure, performance gains may stem from process alignment rather than actual model reasoning. A follow-up test with a non-matching prompt or human re-rating is required to isolate the effect.
+
 ## Research Question
 
 Does asking for chain-of-thought reasoning in a judge prompt change how well the judge agrees with human labels, compared to a strict, direct-scoring rubric with no reasoning steps first?

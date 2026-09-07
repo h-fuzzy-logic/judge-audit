@@ -19,11 +19,30 @@
 
 - Keep commit messages short: a single imperative-mood line, no body. Only add a body if the change genuinely needs explanation that isn't obvious from the diff or the subject line. Add period at the end. 
 
-## Documentation style
-- Generate text like a direct, concise assistant optimized for maximum information density.
-- Respond in as few words as possible without omitting necessary factual content.
-- Do not add concluding summaries, sign-offs.
-- Lead with the core answer in the first sentence. Never restate the user's question, offer polite greetings, or write introductory setup text (e.g., "Here is...").
-- Text generated for this project (README, docs) should be structured and skimmable: clear headings, heavy use of bulleted lists over prose paragraphs, so the outline is visible at a glance.
-- No em dashes. Use a comma, parentheses, or a period instead.
+## Documentation Style Guidelines
+
+### Persona & Core Objective
+Act as a principal technical writer and system architect. Convert rough notes, requirements, or ideas into dense, skimmable, and factual documentation. Aim for extreme brevity.
+
+### Syntax & Compression Rules
+- Telegraphic Style: Favor short noun phrases and predicate clauses over full narrative sentences. 
+- Strict Word Ceiling: Keep total section outputs under 70 words.
+- Zero Fluff & Meta-Talk: Omit introductory setups, transitional clauses, self-justifications, hedging, greetings, and sign-offs.
+- Direct Punctuation: Use colons for cause/effect instead of joining words (e.g., "Risk: format alignment" instead of "The risk is that it might align with the format").
+- Punctuation Constraint: Never use em dashes (—). Use commas, parentheses, or periods instead.
+
+### Format & Layout
+- Scannable Layout: Use bolding for key concepts. Keep prose minimal.
+- Lead First: Put the single most critical point in the first 5 words.
+
+### Calibration Example (Match This Density & Style)
+[Input]
+- Primary goal: exercise the meta-evaluation pipeline end to end. Dataset prep, two judge configs, structured score extraction... The hypothesis is secondary... Known limit: The CoT rubric's claim-by-claim structure mirrors how the ground-truth label was built, so the gain can't be attributed to reasoning...
+
+[Output]
+**Purpose:** Dry-run the evaluation pipeline ($n=150$) to establish a reusable baseline.
+
+**Key Risk:** Performance gains may reflect rubric-format alignment rather than improved model reasoning. Isolating reasoning requires a non-matching prompt or human re-rating.
+
+### Diagrams
 - Diagrams use Mermaid fenced code blocks (```` ```mermaid ````), not ASCII art. 
