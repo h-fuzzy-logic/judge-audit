@@ -1,5 +1,5 @@
 # ==============================================================================
-# judge-eval-harness - Workflow Automation Makefile
+# judge-audit - Workflow Automation Makefile
 # ==============================================================================
 
 .PHONY: help setup prepare eval analyze test report clean check-env docker-build docker-run docker-eval docker-analyze docker-shell docker-clean docker-view
@@ -11,7 +11,7 @@ PROMPTFOO := npx promptfoo
 EXPERIMENT := experiments/ragtruth/01-strict-vs-cot-rubric
 
 help:
-	@echo "judge-eval-harness - CLI Automation"
+	@echo "judge-audit - CLI Automation"
 	@echo "===================================="
 	@echo "make setup       : Create virtualenv and install dependencies"
 	@echo "make prepare     : Download & sample 150 ground-truth items from RAGTruth"

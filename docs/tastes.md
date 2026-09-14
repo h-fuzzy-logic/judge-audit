@@ -1,6 +1,6 @@
 # Tastes
 
-Notes on research and engineering taste, distilled from building `judge-eval-harness`. Kept here for reuse on an about page, resume, and in interviews.
+Notes on research and engineering taste, distilled from building `judge-audit`. Kept here for reuse on an about page, resume, and in interviews.
 
 ## Research Taste
 

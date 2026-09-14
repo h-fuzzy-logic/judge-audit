@@ -1,4 +1,4 @@
-# judge-eval-harness
+# judge-audit
 
 ## Project Summary
 A harness that measures whether an LLM's score agrees with a score given by a human.
@@ -28,7 +28,7 @@ This repo was built interactively with Claude Code with project-specific convent
 ### Project Structure
 
 ```
-judge-eval-harness/
+judge-audit/
 ├── CLAUDE.md                    # working conventions for this repo
 ├── Dockerfile
 ├── docker-compose.yml

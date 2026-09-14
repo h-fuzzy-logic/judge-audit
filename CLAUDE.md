@@ -1,4 +1,4 @@
-# judge-eval-harness
+# judge-audit
 
 ## Working conventions
 
