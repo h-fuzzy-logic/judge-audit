@@ -1,11 +1,18 @@
 # judge-audit
 
-## Project Summary
-A harness that measures whether an LLM's score agrees with a score given by a human.
+*Guarding the guards: meta-evaluation of LLM judges. Measuring how well an LLM grader agrees with human labels, and where it fails.*
 
-I see LLM-as-judge being used everywhere but it makes me so uncomfortable, seeing AI evaluate AI. So I created this harness to allow for rapid experimentation with different tasks and metrics.  See [Research](docs/research.md) for the listing of completed and planned experiments.
+## Headline Finding
+Chain-of-thought (CoT) grading dramatically improves hallucination detection (class 0 recall goes from **0.26** to **0.56**, $p=0.0002$, $n=150$) but introduces systematic over-scoring.
 
-I build the repo to be flexible, to allow experimentation with different tasks, metrics, LLMs, and datasets. Details about [engineering choices](docs/tastes.md#engineering-taste).
+![Strict vs CoT Agreement Confusion Matrices](experiments/ragtruth/01-strict-vs-cot-rubric/figures/combined_google_gemini-3.5-flash-lite.png)
+
+## Motivation
+Evaluating generative model outputs via LLM judges is increasingly common, but relying on unvalidated AI-as-judge models is risky. This harness enables rapid, statistically grounded experiments comparing LLM judge configurations against high-quality human consensus labels (from [RAGTruth](experiments/ragtruth/ragtruth.md)).
+
+The codebase is built for flexibility across datasets, metrics, and models. See [engineering choices](docs/tastes.md#engineering-taste) for architectural principles.
+
+For a full listing of completed and planned experiments, see [Research](docs/research.md).
 
 This repo was built interactively with Claude Code with project-specific conventions in `CLAUDE.md`.
 
