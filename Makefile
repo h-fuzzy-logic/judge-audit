@@ -2,7 +2,7 @@
 # judge-audit - Workflow Automation Makefile
 # ==============================================================================
 
-.PHONY: help setup prepare eval analyze test report clean check-env docker-build docker-run docker-eval docker-analyze docker-test docker-shell docker-clean docker-view
+.PHONY: help setup prepare eval analyze test report clean check-env docker-build docker-run docker-eval docker-analyze docker-test docker-lint docker-shell docker-clean docker-view
 
 PYTHON := python3
 VENV := .venv
@@ -18,12 +18,14 @@ help:
 	@echo "make eval        : Run Promptfoo judge evaluations (requires API keys)"
 	@echo "make analyze     : Compute Cohen's kappa, weighted kappa, and confusion matrices"
 	@echo "make run-all     : Execute end-to-end pipeline (prepare -> eval -> analyze)"
+	@echo "make lint        : Run ruff over src/, scripts/, and tests/"
 	@echo "make clean       : Clean temporary build files, cached results, and virtualenv"
 	@echo "make docker-build: Build the Docker image"
 	@echo "make docker-run  : Run the full pipeline in Docker (mounts data/, configs/, experiments/)"
 	@echo "make docker-eval : Run just the Promptfoo eval step in Docker (no analyze step)"
 	@echo "make docker-analyze: Run just extract_scores.py + compute_agreement.py in Docker (no eval step)"
 	@echo "make docker-test : Run the pytest suite in Docker"
+	@echo "make docker-lint : Run ruff over src/, scripts/, and tests/ in Docker"
 	@echo "make docker-shell: Open a shell inside the Docker image for debugging"
 	@echo "make docker-clean: Remove Docker containers, image, and volumes for this project"
 	@echo "make docker-view : Launch the Promptfoo browser UI at http://localhost:15500"
@@ -63,6 +65,9 @@ run-all: prepare eval analyze
 test:
 	$(PYTHON) -m pytest tests/
 
+lint:
+	$(PYTHON) -m ruff check src/ scripts/ tests/
+
 clean:
 	rm -rf $(VENV)
 	rm -rf $(EXPERIMENT)/results.json
@@ -84,6 +89,9 @@ docker-analyze: check-env docker-build
 
 docker-test: check-env docker-build
 	docker compose run --rm eval make test
+
+docker-lint: check-env docker-build
+	docker compose run --rm eval make lint
 
 docker-shell: check-env docker-build
 	docker compose run --rm eval bash

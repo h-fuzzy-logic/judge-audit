@@ -1,4 +1,5 @@
 import os
+
 import pandas as pd
 from datasets import load_dataset
 
@@ -24,7 +25,7 @@ def map_ragtruth_to_score(processed_labels: dict) -> int:
 
 def prepare_ragtruth_dataset(output_path: str = "data/processed/source_groundedness_150.csv", seed: int = 42):
     print("Loading RAGTruth dataset from Hugging Face (wandb/RAGTruth-processed)...")
-    
+
     # Load dataset split from Hugging Face
     dataset = load_dataset("wandb/RAGTruth-processed", split="train")
     df = dataset.to_pandas()
@@ -72,7 +73,7 @@ def prepare_ragtruth_dataset(output_path: str = "data/processed/source_groundedn
 
     for score_class in [0, 1, 2]:
         sub_df = df[df["human_groundedness_score"] == score_class]
-        
+
         if len(sub_df) < sample_size_per_class:
             print(f"Warning: Class {score_class} has only {len(sub_df)} samples. Sampling all available.")
             sampled_dfs.append(sub_df)
@@ -80,7 +81,7 @@ def prepare_ragtruth_dataset(output_path: str = "data/processed/source_groundedn
             sampled_dfs.append(sub_df.sample(n=sample_size_per_class, random_state=seed))
 
     final_df = pd.concat(sampled_dfs, ignore_index=True)
-    
+
     # Shuffle dataset
     final_df = final_df.sample(frac=1.0, random_state=seed).reset_index(drop=True)
 

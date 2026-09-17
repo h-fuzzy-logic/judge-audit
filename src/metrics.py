@@ -15,7 +15,7 @@ def compute_quadratic_weighted_kappa(human_scores, judge_scores) -> float:
 
 
 def compute_exact_agreement_rate(human_scores, judge_scores) -> float:
-    return float(np.mean([h == j for h, j in zip(human_scores, judge_scores)]))
+    return float(np.mean([h == j for h, j in zip(human_scores, judge_scores, strict=True)]))
 
 
 def compute_recall_for_class(human_scores, judge_scores, label: int):
@@ -92,8 +92,8 @@ def summarize_calibration(human_scores, judge_scores) -> dict:
     """
     n_items = len(human_scores)
     valid_mask = [not pd.isna(j) for j in judge_scores]
-    valid_human = [h for h, v in zip(human_scores, valid_mask) if v]
-    valid_judge = [int(j) for j, v in zip(judge_scores, valid_mask) if v]
+    valid_human = [h for h, v in zip(human_scores, valid_mask, strict=True) if v]
+    valid_judge = [int(j) for j, v in zip(judge_scores, valid_mask, strict=True) if v]
     n_valid = len(valid_human)
 
     summary = {

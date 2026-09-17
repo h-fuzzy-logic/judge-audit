@@ -3,6 +3,7 @@ import textwrap
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")  # no display in the Docker container
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -61,7 +62,7 @@ def plot_confusion_matrix_grid(
     if n == 1:
         axes = [axes]
 
-    for ax, (subplot_title, matrix) in zip(axes, matrices.items()):
+    for ax, (subplot_title, matrix) in zip(axes, matrices.items(), strict=True):
         sns.heatmap(matrix, annot=True, fmt="d", cmap="Blues", square=True, ax=ax)
         ax.set_title(subplot_title)
 

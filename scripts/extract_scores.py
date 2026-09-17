@@ -2,7 +2,9 @@
 src.extractors.extract_score, and writes a scored CSV for calibration analysis.
 
 Usage:
-    python scripts/extract_scores.py --results <experiment_dir>/results.json --output <experiment_dir>/scored_results.csv
+    python scripts/extract_scores.py \
+        --results <experiment_dir>/results.json \
+        --output <experiment_dir>/scored_results.csv
 """
 import argparse
 import csv

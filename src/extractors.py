@@ -1,7 +1,6 @@
 """Extracts a 0-2 groundedness score from a judge's raw text output."""
 import json
 import re
-from typing import Optional
 
 _FENCE_RE = re.compile(r"```(?:json)?\s*(.*?)\s*```", re.DOTALL)
 _SCORE_FALLBACK_RE = re.compile(r'"?score"?\s*[:=]\s*(\d)', re.IGNORECASE)
@@ -9,7 +8,7 @@ _SCORE_FALLBACK_RE = re.compile(r'"?score"?\s*[:=]\s*(\d)', re.IGNORECASE)
 _decoder = json.JSONDecoder()
 
 
-def _parse_first_json_object(text: str) -> Optional[dict]:
+def _parse_first_json_object(text: str) -> dict | None:
     # raw_decode parses one JSON value starting at an index and ignores
     # trailing content — handles both "JSON + junk" and "prose + JSON"
     # (chain-of-thought output) without needing to guess where it ends.
@@ -23,7 +22,7 @@ def _parse_first_json_object(text: str) -> Optional[dict]:
     return None
 
 
-def extract_score(raw_output: str) -> Optional[int]:
+def extract_score(raw_output: str) -> int | None:
     """Parses a judge's score from its raw output.
 
     Tries the response as-is, then with a markdown code fence stripped

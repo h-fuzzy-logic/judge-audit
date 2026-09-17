@@ -14,9 +14,9 @@ Notes on research and engineering taste, distilled from building `judge-audit`. 
 ## Engineering Taste
 
 - **Reproducibility over convenience.** Standardized on Docker specifically to kill "works on my machine" drift, even though it took several rounds (Node version mismatch, missing `make` binary) to get right.
-- **Cheap checks before expensive ones.** Smoke-test on a few rows before a full paid eval run. Run a free config validator before the paid run itself. Always spend the cheapest resource first to catch the same bug.
+- **Cheap checks before expensive ones.** Smoke-test on a few rows before a full paid eval run. Validate configurations and run unit tests (via pytest and promptfoo validate in CI) before any API-spending code paths are executed.
 - **Guardrails should track actual risk, not blanket-allow or blanket-deny.** Split tool permissions so free operations run without friction, while anything that spends real API money always asks first. Friction proportional to consequence, not to the tool name.
-- **Prevent mistakes at the moment they happen, not after.** Added an automatic check that runs on every relevant edit, instead of discovering a bad config only after a failed run.
+- **Prevent mistakes at the moment they happen, not after.** Added local pre-commit hooks and a GitHub Actions CI workflow that runs on push to block broken tests or invalid configs from entering main.
 - **Small, verifiable steps over big batches.** Prefers editing one or two files at a time and pausing to test/understand. In a system where a "run" costs real money and real time, unverified batching just means discovering several bugs at once instead of one.
 - **Say the convention once, in the right place.** Team-shared conventions (tooling usage, doc style) go in the project's own instructions file; personal working-style preferences go in cross-session memory instead. Doesn't conflate "how this repo works" with "how I like to work."
 - **Documentation is a UX problem too.** Pushed back on prose-heavy docs in favor of skimmable, heavily-bulleted structure. A README should be scannable, not just complete.
@@ -35,7 +35,7 @@ Reproducible environments, cost-aware guardrails, and a fast experiment loop are
 ### Cost-aware guardrails
 - **Guardrails tuned for cost, not just correctness.** Tool permissions auto-allow no-cost operations but always ask first for anything that spends real API money.
 - **Config mistakes caught before they cost anything.** An automated check runs on every config edit, catching errors immediately instead of surfacing them only after a failed (and possibly paid) eval run.
-- **Zero-cost config checks.** A free validation step catches bad paths/YAML/provider IDs in seconds, no API spend.
+- **Zero-cost config checks.** A free validation step catches bad paths/YAML/provider IDs in seconds, no API spend. Integrated into GitHub Actions (CI) to block invalid configs and test failures on push.
 
 ### Fast experiment loop
 - **Eval history survives ephemeral containers.** Local results stay browsable across runs, not just the latest.

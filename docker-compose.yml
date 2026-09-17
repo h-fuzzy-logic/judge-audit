@@ -9,6 +9,7 @@ services:
       - "15500:15500"
     volumes:
       - ./Makefile:/app/Makefile
+      - ./ruff.toml:/app/ruff.toml
       - ./data:/app/data
       - ./configs:/app/configs
       - ./experiments:/app/experiments
