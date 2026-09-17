@@ -2,7 +2,7 @@
 # judge-audit - Workflow Automation Makefile
 # ==============================================================================
 
-.PHONY: help setup prepare eval analyze test report clean check-env docker-build docker-run docker-eval docker-analyze docker-shell docker-clean docker-view
+.PHONY: help setup prepare eval analyze test report clean check-env docker-build docker-run docker-eval docker-analyze docker-test docker-shell docker-clean docker-view
 
 PYTHON := python3
 VENV := .venv
@@ -23,6 +23,7 @@ help:
 	@echo "make docker-run  : Run the full pipeline in Docker (mounts data/, configs/, experiments/)"
 	@echo "make docker-eval : Run just the Promptfoo eval step in Docker (no analyze step)"
 	@echo "make docker-analyze: Run just extract_scores.py + compute_agreement.py in Docker (no eval step)"
+	@echo "make docker-test : Run the pytest suite in Docker"
 	@echo "make docker-shell: Open a shell inside the Docker image for debugging"
 	@echo "make docker-clean: Remove Docker containers, image, and volumes for this project"
 	@echo "make docker-view : Launch the Promptfoo browser UI at http://localhost:15500"
@@ -60,7 +61,7 @@ run-all: prepare eval analyze
 	@echo "Full calibration pipeline execution complete!"
 
 test:
-	$(BIN)/pytest tests/
+	$(PYTHON) -m pytest tests/
 
 clean:
 	rm -rf $(VENV)
@@ -80,6 +81,9 @@ docker-eval: check-env docker-build
 
 docker-analyze: check-env docker-build
 	docker compose run --rm eval make analyze
+
+docker-test: check-env docker-build
+	docker compose run --rm eval make test
 
 docker-shell: check-env docker-build
 	docker compose run --rm eval bash

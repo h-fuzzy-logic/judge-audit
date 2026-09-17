@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt requirements-data.txt ./
+RUN pip install --no-cache-dir -r requirements.txt -r requirements-data.txt
 RUN npm install -g promptfoo@0.122.0
 
 COPY . .

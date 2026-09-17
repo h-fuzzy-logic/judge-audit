@@ -1,0 +1,3 @@
+# Dataset download & preparation only (scripts/prepare_dataset.py).
+# Kept out of requirements.txt so CI and test runs skip this dependency tree.
+datasets==5.0.1

@@ -8,6 +8,7 @@
       "Bash(make test)",
       "Bash(make docker-build)",
       "Bash(make docker-analyze)",
+      "Bash(make docker-test)",
       "Bash(make docker-shell)",
       "Bash(make docker-view)",
       "Bash(make docker-clean)",
