@@ -3,7 +3,7 @@
 *Guarding the guards: meta-evaluation of LLM judges. Measuring how well an LLM grader agrees with human labels, and where it fails.*
 
 ## Headline Finding
-Chain-of-thought (CoT) grading dramatically improves hallucination detection (class 0 recall goes from **0.26** to **0.56**, $p=0.0002$, $n=150$) but introduces systematic over-scoring.
+Chain-of-thought (CoT) grading dramatically improves hallucination detection (class 0 recall goes from **0.26** to **0.56**, $p=0.0002$, $n=150$) with no precision cost (**0.72** to **0.76**).
 
 ![Strict vs CoT Agreement Confusion Matrices](experiments/ragtruth/01-strict-vs-cot-rubric/figures/combined_google_gemini-3.5-flash-lite.png)
 

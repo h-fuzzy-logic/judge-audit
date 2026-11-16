@@ -108,6 +108,7 @@ Paired bootstrap, 10,000 resamples ([`src/significance.py`](../../../src/signifi
 ### Caveats
 
 - **CoT structure matches label construction.** CoT categorizes claims span-by-span, as the label was built; strict gives one holistic guess. Part of the κ gain may be that match. Not separable here.
+- **Worst-case misses rose slightly.** Contradictions scored "Fully Grounded" (human 0, judge 2): 6/50 strict, 9/50 CoT. A 3-item gap, not tested for significance. Worth watching in a replication.
 - **Data processing correction.** Original run lacked the `quality` filter. After re-sampling: κ 0.38 to 0.40 (strict), 0.54 to 0.53 (CoT), within noise at n=150. Finding unchanged.
 - **Provider.** `google:gemini-3.7-flash` hit frequent `503 UNAVAILABLE` and ran slowly; switched to `gemini-3.5-flash-lite`, which may understate a stronger model.
 
