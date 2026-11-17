@@ -3,9 +3,13 @@
 *Guarding the guards: meta-evaluation of LLM judges. Measuring how well an LLM grader agrees with human labels, and where it fails.*
 
 ## Headline Finding
-Chain-of-thought (CoT) grading dramatically improves hallucination detection (class 0 recall goes from **0.26** to **0.56**, $p=0.0002$, $n=150$) with no precision cost (**0.72** to **0.76**).
+Chain-of-thought (CoT) grading caught **28 of 50** contradictions, up from **13** (class 0 recall 0.26 to 0.56, $p=0.0002$, $n=150$), with no precision cost (0.72 to 0.76).
+
+**Key caveat:** The CoT rubric checks claims one by one, the same way the ground-truth labels were built. Part of the gain may be format match, not better reasoning. Scope: single judge model, one dataset.
 
 ![Strict vs CoT Agreement Confusion Matrices](experiments/ragtruth/01-strict-vs-cot-rubric/figures/combined_google_gemini-3.5-flash-lite.png)
+
+**Status:** 1 experiment complete. Next: position, verbosity, and self-preference bias. [Roadmap](docs/research.md) 
 
 ## Motivation
 Evaluating generative model outputs via LLM judges is increasingly common, but relying on unvalidated AI-as-judge models is risky. This harness enables rapid, statistically grounded experiments comparing LLM judge configurations against high-quality human consensus labels (from [RAGTruth](experiments/ragtruth/ragtruth.md)).
@@ -32,7 +36,8 @@ This repo was built interactively with Claude Code with project-specific convent
 
 `make docker-run` chains prepare, eval, and analyze in one command if you want the whole pipeline at once (also spends money on the eval step). See [`CLAUDE.md`](CLAUDE.md) for the full set of commands.
 
-### Project Structure
+<details>
+<summary><b>Project structure</b></summary>
 
 ```
 judge-audit/
@@ -54,38 +59,50 @@ judge-audit/
 │   ├── tastes.md                # research/engineering taste notes
 │   ├── llm-as-judge.md          # background reference on LLM-as-judge as a technique
 │   ├── agreement-metrics.md     # background reference on judge/human agreement statistics
-│   └── industry-relevance.md    # why judge evaluation matters commercially, and how to reuse this approach
+│   ├── industry-relevance.md    # why judge evaluation matters commercially, and how to reuse this approach
+│   ├── worklog.md               # session-by-session activity log with costs
+│   └── learnings.md             # technical and scientific learnings
 ├── experiments/
 │   └── ragtruth/
 │       ├── ragtruth.md          # RAGTruth dataset description
-│       └── 01-strict-vs-cot-rubric/
-│           ├── README.md             # this experiment's hypothesis, methodology, and findings
-│           ├── promptfooconfig.yaml  # this experiment's judge eval orchestration
-│           ├── scored_results.csv    # per-item judge vs. human scores
-│           ├── agreement_summary.csv # kappa/QWK/agreement per condition
-│           └── figures/              # confusion-matrix heatmaps
+│       ├── 01-strict-vs-cot-rubric/
+│       │   ├── README.md             # this experiment's hypothesis, methodology, and findings
+│       │   ├── promptfooconfig.yaml  # this experiment's judge eval orchestration
+│       │   ├── scored_results.csv    # per-item judge vs. human scores
+│       │   ├── agreement_summary.csv # kappa/QWK/agreement per condition
+│       │   └── figures/              # confusion-matrix heatmaps
+│       └── 02-verbosity-bias/
+│           └── README.md             # planned: verbosity bias probe
 ├── scripts/
 │   ├── prepare_dataset.py       # RAGTruth -> 150-item CSV
 │   ├── extract_scores.py        # results.json -> scored_results.csv
 │   └── compute_agreement.py     # scored_results.csv -> metrics + figures
 ├── src/
 │   ├── extractors.py            # judge output -> 0/1/2 score
-│   ├── metrics.py                # Cohen's kappa, QWK, confusion matrix
-│   └── visualization.py          # heatmap rendering
+│   ├── metrics.py               # Cohen's kappa, QWK, confusion matrix
+│   ├── significance.py          # paired bootstrap CIs and p-values
+│   └── visualization.py         # heatmap rendering
 └── tests/                       # one file per src/scripts module
 ```
 
 Note: each experiment's `results.json` (raw Promptfoo output) and `.promptfoo/` (eval history/cache) are generated locally by `make docker-eval` but git-ignored, so they won't appear after a fresh clone.
 
+</details>
+
 ## Documentation
 
-Deeper documentation than this README needs, organized by purpose:
+Deeper documentation, organized by purpose:
 
+### Research
 - [Research](docs/research.md): Index of hypotheses tested, linking out to each experiment's own write-up.
-- [Worklog](docs/worklog.md): Session-by-session activity log with costs and learnings.
-- [Technologies](docs/approaches.md): Why each technology was chosen and how it is used in this repo (Promptfoo, Docker, Python libraries).
 - [Research Taste and Engineering Taste](docs/tastes.md): Judgments and principles behind the decisions in this repo.
-- [LLM-as-Judge](docs/llm-as-judge.md): Background on LLM-as-judge as a technique, and how the tasks it's commonly used for relate to the calibration problem this project studies.
 - [Agreement Metrics](docs/agreement-metrics.md): Background on the statistics used to measure judge/human agreement, including ones considered but not used.
+
+### Background
 - [Industry Relevance](docs/industry-relevance.md): Why judge evaluation is a commercial problem, not just a research one, and how this repo's approach could be reused for a production judge.
+- [LLM-as-Judge](docs/llm-as-judge.md): Background on LLM-as-judge as a technique, and how the tasks it's commonly used for relate to the calibration problem this project studies.
+
+### Engineering
+- [Technologies](docs/approaches.md): Why each technology was chosen and how it is used in this repo (Promptfoo, Docker, Python libraries).
+- [Worklog](docs/worklog.md): Session-by-session activity log with costs and learnings.
 - [CLAUDE.md](CLAUDE.md): Conventions for this repo.
