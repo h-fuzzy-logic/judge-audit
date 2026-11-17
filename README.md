@@ -3,7 +3,7 @@
 *Meta-evaluation of LLM judges: measuring judge/human agreement and where judges miss.*
 
 ## Headline Finding
-Chain-of-thought (CoT) grading caught **28 of 50** contradictions, up from **13** (class 0 recall 0.26 to 0.56, $p=0.0002$, $n=150$), with no precision cost (0.72 to 0.76).
+Chain-of-thought (CoT) grading caught **28 of 50** contradictions, up from **13** (class 0 recall 0.26 to 0.56, $p=0.0002$, $n=150$), with no detectable precision cost (0.72 to 0.76).
 
 **Key caveat:** The CoT rubric checks claims one by one, the same way the ground-truth labels were built. Part of the gain may be format match, not better reasoning. Scope: single judge model, one dataset.
 
