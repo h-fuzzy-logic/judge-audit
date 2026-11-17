@@ -1,6 +1,6 @@
 # judge-audit
 
-*Guarding the guards: meta-evaluation of LLM judges. Measuring how well an LLM grader agrees with human labels, and where it fails.*
+*Meta-evaluation of LLM judges: measuring judge/human agreement and where judges miss.*
 
 ## Headline Finding
 Chain-of-thought (CoT) grading caught **28 of 50** contradictions, up from **13** (class 0 recall 0.26 to 0.56, $p=0.0002$, $n=150$), with no precision cost (0.72 to 0.76).
